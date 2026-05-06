@@ -1,11 +1,100 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Dashboard Karyawan - Full Screen</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .bg-main {
+            background-color: #a9af9e;
+        }
+    </style>
 </head>
-<body>
-    <h1>Beranda</h1>
+<body class="bg-main min-h-screen flex flex-col">
+
+    <header class="bg-white px-6 py-4 flex justify-between items-center shadow-md">
+        <div class="flex items-center gap-4">
+            <div class="w-16 h-16 bg-[#8b9282] rounded-full flex items-center justify-center text-white shadow-inner">
+                <i data-lucide="user" class="w-10 h-10"></i>
+            </div>
+            <div>
+                <h2 class="font-bold text-xl text-gray-900 leading-tight">Abadi Nanda Jaya</h2>
+                <p class="text-sm text-gray-500 font-medium tracking-wide">987654</p>
+                <p class="text-sm text-gray-500 font-medium tracking-wide">Staff Perencanaan</p>
+            </div>
+        </div>
+        <button class="p-2 hover:bg-gray-100 rounded-full transition-all group">
+            <i data-lucide="log-out" class="w-8 h-8 text-gray-800 group-hover:text-red-600"></i>
+        </button>
+    </header>
+
+    <main class="flex-1 w-full max-w-4xl mx-auto px-6 pt-10 pb-36 flex flex-col gap-10">
+        
+        <section class="grid grid-cols-3 gap-8">
+            <div class="flex flex-col items-center gap-3 cursor-pointer group">
+                <div class="w-20 h-20 bg-[#8b9282] rounded-full flex items-center justify-center text-white shadow-lg group-hover:bg-[#7a8171] transition-all transform group-hover:scale-110">
+                    <i data-lucide="calendar-days" class="w-10 h-10"></i>
+                </div>
+                <span class="text-sm font-semibold text-gray-900">Absensi</span>
+            </div>
+            <div class="flex flex-col items-center gap-3 cursor-pointer group">
+                <div class="w-20 h-20 bg-[#8b9282] rounded-full flex items-center justify-center text-white shadow-lg group-hover:bg-[#7a8171] transition-all transform group-hover:scale-110">
+                    <i data-lucide="user-check" class="w-10 h-10"></i>
+                </div>
+                <span class="text-sm font-semibold text-gray-900 text-center">Pengajuan Izin</span>
+            </div>
+            <div class="flex flex-col items-center gap-3 cursor-pointer group">
+                <div class="w-20 h-20 bg-[#8b9282] rounded-full flex items-center justify-center text-white shadow-lg group-hover:bg-[#7a8171] transition-all transform group-hover:scale-110">
+                    <i data-lucide="clipboard-list" class="w-10 h-10"></i>
+                </div>
+                <span class="text-sm font-semibold text-gray-900">Laporan</span>
+            </div>
+        </section>
+
+        <section class="flex flex-col gap-6">
+            <div class="bg-[#f4f6f9] p-8 rounded-[25px] shadow-sm hover:shadow-md transition-shadow min-h-[150px]">
+                <h3 class="text-lg font-bold text-gray-700 border-b border-gray-200 pb-2 mb-4">Pemberitahuan</h3>
+                <p class="text-gray-400 italic">Belum ada pemberitahuan terbaru.</p>
+            </div>
+
+            <div class="bg-[#f4f6f9] p-8 rounded-[25px] shadow-sm hover:shadow-md transition-shadow min-h-[150px]">
+                <h3 class="text-lg font-bold text-gray-700 border-b border-gray-200 pb-2 mb-4">Sistem</h3>
+                <p class="text-gray-400 italic">Status sistem: Normal.</p>
+            </div>
+        </section>
+
+    </main>
+
+    <nav class="fixed bottom-8 left-0 right-0 px-6">
+        <div class="max-w-2xl mx-auto bg-[#f4f6f9]/90 backdrop-blur-md py-4 px-8 rounded-full shadow-2xl flex justify-between items-center border border-white/20">
+            <button class="flex-1 flex justify-center group">
+                <i data-lucide="home" class="w-7 h-7 text-gray-600 group-hover:text-[#8b9282] transition-colors"></i>
+            </button>
+            <button class="flex-1 flex justify-center group">
+                <i data-lucide="calendar-days" class="w-7 h-7 text-gray-600 group-hover:text-[#8b9282] transition-colors"></i>
+            </button>
+            <button class="flex-1 flex justify-center group">
+                <i data-lucide="user-check" class="w-7 h-7 text-gray-600 group-hover:text-[#8b9282] transition-colors"></i>
+            </button>
+            <button class="flex-1 flex justify-center group">
+                <i data-lucide="clipboard-list" class="w-7 h-7 text-gray-600 group-hover:text-[#8b9282] transition-colors"></i>
+            </button>
+            <button class="flex-1 flex justify-center group">
+                <i data-lucide="user" class="w-7 h-7 text-gray-600 group-hover:text-[#8b9282] transition-colors"></i>
+            </button>
+        </div>
+    </nav>
+
+    <script>
+        lucide.createIcons();
+    </script>
 </body>
 </html>
