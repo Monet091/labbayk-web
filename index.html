@@ -58,24 +58,54 @@
             </form>
 
             <script>
-                // Dummy auth Sprint 1 — Sprint 2 ganti ke fetch API backend
-                const users = [
-                    { nik: 'LBK001', password: 'password123' },
-                    { nik: 'LBK002', password: 'password123' },
-                    { nik: 'ADM001', password: 'password123' },
-                ];
-
-                function doLogin() {
+                async function doLogin() {
+                    // Ambil inputan
                     const nik = document.getElementById('username').value.trim();
                     const pass = document.getElementById('password').value.trim();
                     const err = document.getElementById('errorMsg');
+                    const btn = document.querySelector('button');
 
-                    const valid = users.find(u => u.nik === nik && u.password === pass);
-                    if (valid) {
-                        sessionStorage.setItem('userNIK', nik);
-                        window.location.href = 'beranda.html';
-                    } else {
+                    if (!nik || !pass) {
+                        err.innerText = "NIK dan Password wajib diisi.";
                         err.classList.remove('hidden');
+                        return;
+                    }
+
+                    // Ubah tombol jadi loading
+                    btn.innerText = "LOADING...";
+                    btn.disabled = true;
+                    err.classList.add('hidden');
+
+                    try {
+                        // Tembak ke Jembatan PHP
+                        const response = await fetch('api_login.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ nik: nik, password: pass })
+                        });
+
+                        const result = await response.json();
+
+                        if (response.ok && result.status === 'success') {
+                            // Jika Aiven bilang YES, simpan sesi dan pindah halaman
+                            sessionStorage.setItem('userNIK', nik);
+                            sessionStorage.setItem('userNama', result.nama);
+                            window.location.href = 'beranda.html';
+                        } else {
+                            // Jika Aiven bilang NO (Password salah)
+                            err.innerText = result.message || "NIK atau password salah.";
+                            err.classList.remove('hidden');
+                            btn.innerText = "LOGIN";
+                            btn.disabled = false;
+                        }
+                    } catch (error) {
+                        // Jika file PHP tidak ketemu atau server mati
+                        err.innerText = "Terjadi kesalahan sistem. Coba lagi nanti.";
+                        err.classList.remove('hidden');
+                        btn.innerText = "LOGIN";
+                        btn.disabled = false;
                     }
                 }
             </script>
