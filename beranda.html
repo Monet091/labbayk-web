@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,16 +9,19 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
         body {
             font-family: 'Inter', sans-serif;
             margin: 0;
             padding: 0;
         }
+
         .bg-main {
             background-color: #a9af9e;
         }
     </style>
 </head>
+
 <body class="bg-main min-h-screen flex flex-col">
 
     <header class="bg-white px-6 py-4 flex justify-between items-center shadow-md">
@@ -26,25 +30,26 @@
                 <i data-lucide="user" class="w-10 h-10"></i>
             </div>
             <div>
-                <h2 class="font-bold text-xl text-gray-900 leading-tight">Abadi Nanda Jaya</h2>
-                <p class="text-sm text-gray-500 font-medium tracking-wide">987654</p>
-                <p class="text-sm text-gray-500 font-medium tracking-wide">Staff Perencanaan</p>
+                <h2 class="font-bold text-xl text-gray-900 leading-tight">Loading...</h2>
+                <p class="text-sm text-gray-500 font-medium tracking-wide">Memuat NIK</p>
+                <p class="text-sm text-gray-500 font-medium tracking-wide">Karyawan</p>
             </div>
         </div>
-        <button class="p-2 hover:bg-gray-100 rounded-full transition-all group">
+        <button id="btnLogout" class="p-2 hover:bg-gray-100 rounded-full transition-all group">
             <i data-lucide="log-out" class="w-8 h-8 text-gray-800 group-hover:text-red-600"></i>
         </button>
     </header>
 
     <main class="flex-1 w-full max-w-4xl mx-auto px-6 pt-10 pb-36 flex flex-col gap-10">
-        
+
         <section class="grid grid-cols-3 gap-8">
-            <div class="flex flex-col items-center gap-3 cursor-pointer group">
+            <div id="btnAbsenMasuk" class="flex flex-col items-center gap-3 cursor-pointer group">
                 <div class="w-20 h-20 bg-[#8b9282] rounded-full flex items-center justify-center text-white shadow-lg group-hover:bg-[#7a8171] transition-all transform group-hover:scale-110">
                     <i data-lucide="calendar-days" class="w-10 h-10"></i>
                 </div>
                 <span class="text-sm font-semibold text-gray-900">Absensi</span>
             </div>
+            
             <div class="flex flex-col items-center gap-3 cursor-pointer group">
                 <div class="w-20 h-20 bg-[#8b9282] rounded-full flex items-center justify-center text-white shadow-lg group-hover:bg-[#7a8171] transition-all transform group-hover:scale-110">
                     <i data-lucide="user-check" class="w-10 h-10"></i>
@@ -94,7 +99,54 @@
     </nav>
 
     <script>
+        // Render Ikon
         lucide.createIcons();
+
+        // 1. PENGAMANAN HALAMAN & LOAD DATA USER
+        const userNIK = sessionStorage.getItem('userNIK');
+        const userNama = sessionStorage.getItem('userNama');
+
+        if (!userNIK) {
+            alert("Sesi Anda telah habis atau Anda belum login.");
+            window.location.href = 'index.html';
+        } else {
+            document.querySelector('h2.font-bold').innerText = userNama;
+            document.querySelectorAll('p.text-gray-500')[0].innerText = userNIK;
+        }
+
+        // 2. LOGIKA TOMBOL ABSEN MASUK
+        document.getElementById('btnAbsenMasuk').addEventListener('click', async function () {
+            if(!confirm("Konfirmasi: Apakah Anda yakin ingin melakukan Absen Masuk sekarang?")) return;
+
+            try {
+                // Tembak file absen_masuk.php
+                const response = await fetch('absen_masuk.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ nik: userNIK })
+                });
+
+                const result = await response.json();
+
+                if (response.ok && result.status === 'success') {
+                    alert(result.message); // Notifikasi sukses
+                } else {
+                    alert("GAGAL: " + result.message); // Notifikasi gagal dari server
+                }
+            } catch (error) {
+                alert("Kesalahan Sistem: Tidak dapat terhubung ke database Aiven.");
+                console.error(error);
+            }
+        });
+
+        // 3. LOGIKA TOMBOL LOGOUT
+        document.getElementById('btnLogout').addEventListener('click', function () {
+            if(confirm("Yakin ingin keluar?")) {
+                sessionStorage.clear();
+                window.location.href = 'index.html';
+            }
+        });
     </script>
 </body>
+
 </html>
