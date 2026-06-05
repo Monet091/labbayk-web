@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Absensi Masuk</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Plus Jakarta Sans', Arial, sans-serif; }
+    .smooth-transition { transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1); }
+  </style>
+</head>
+<body class="bg-[#1e1e1e] min-h-screen w-full flex items-center justify-center p-4">
+
+  <div class="w-full max-w-[360px] h-[640px] bg-[#b3b7aa] rounded-[32px] shadow-2xl overflow-hidden flex flex-col justify-between pb-8 relative smooth-transition border border-white/5">
+    
+    <div id="modalSukses" class="absolute top-[90px] left-1/2 -translate-x-1/2 w-[300px] bg-[#dae0ca] border border-[#cbd2ba] py-5 px-4 rounded-2xl shadow-[0_12px_30px_-5px_rgba(0,0,0,0.25)] z-30 text-center opacity-0 scale-95 pointer-events-none smooth-transition">
+      <p class="text-black font-extrabold text-[14px] leading-snug tracking-wide uppercase">
+        ABSEN MASUK<br>BERHASIL!
+      </p>
+    </div>
+
+    <div class="bg-white px-6 py-5 flex items-center gap-5 shadow-sm z-10">
+      <button id="btnBack" class="text-gray-700 hover:scale-110 active:scale-95 transition-transform" title="Kembali">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="3" stroke="currentColor" class="w-6 h-6">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+        </svg>
+      </button>
+      <h2 class="text-lg font-black tracking-wider text-black">ABSEN MASUK</h2>
+    </div>
+
+    <div class="px-6 flex-1 flex flex-col items-center justify-center min-h-[360px]">
+      <div class="relative w-full aspect-[3/4] bg-black rounded-2xl overflow-hidden shadow-lg border border-black/10">
+        
+        <video id="videoKamera" autoplay playsinline class="w-full h-full object-cover smooth-transition"></video>
+        
+        <img id="fotoPreview" class="absolute inset-0 w-full h-full object-cover hidden opacity-0 smooth-transition" alt="Hasil absen masuk">
+
+        <div id="loadingKamera" class="absolute inset-0 flex flex-col items-center justify-center bg-black text-white gap-3 z-20 smooth-transition">
+          <div class="w-8 h-8 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin"></div>
+          <span id="loadingText" class="text-xs font-medium tracking-wide text-gray-400">Mengaktifkan Kamera...</span>
+        </div>
+
+        <div id="badgeWaktu" class="absolute bottom-4 right-4 bg-[#8b9181]/80 backdrop-blur-md text-white text-[11px] font-medium px-2.5 py-1.5 rounded-lg text-right leading-normal hidden opacity-0 smooth-transition z-10"></div>
+
+      </div>
+    </div>
+
+    <div class="px-6 flex justify-center items-center h-16 relative">
+      
+      <div id="layerShutter" class="smooth-transition flex justify-center w-full opacity-100 scale-100">
+        <button id="btnJepret" class="w-14 h-14 rounded-full border-2 border-black flex items-center justify-center bg-transparent hover:bg-black/5 active:scale-90 transition-all shadow-sm">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.8" stroke="currentColor" class="w-6 h-6 text-black">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z" />
+            <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM18.75 10.5h.008v.008h-.008V10.5Z" />
+          </svg>
+        </button>
+      </div>
+
+      <div id="layerKirim" class="smooth-transition absolute inset-0 flex justify-center items-center opacity-0 scale-90 pointer-events-none">
+        <button id="btnKirim" class="bg-white text-black font-bold text-xs uppercase px-8 py-3 rounded-xl shadow-md hover:bg-gray-100 hover:shadow-lg active:scale-95 transition-all tracking-wider border border-black/5">
+          KIRIM
+        </button>
+      </div>
+
+    </div>
+
+  </div>
+
+  <canvas id="canvasMekanik" class="hidden"></canvas>
+
+  <script>
+    const video = document.getElementById('videoKamera');
+    const fotoPreview = document.getElementById('fotoPreview');
+    const loadingKamera = document.getElementById('loadingKamera');
+    const loadingText = document.getElementById('loadingText');
+    const badgeWaktu = document.getElementById('badgeWaktu');
+    const modalSukses = document.getElementById('modalSukses');
+    
+    const btnJepret = document.getElementById('btnJepret');
+    const btnKirim = document.getElementById('btnKirim');
+    const btnBack = document.getElementById('btnBack');
+    
+    const layerShutter = document.getElementById('layerShutter');
+    const layerKirim = document.getElementById('layerKirim');
+    const canvas = document.getElementById('canvasMekanik');
+
+    let streamKamera = null;
+    let currentStep = 1; 
+
+    // Aktifkan Kamera
+    async function jalankanKamera() {
+      loadingKamera.classList.remove('hidden', 'opacity-0', 'pointer-events-none');
+      loadingText.innerText = "Mengaktifkan Kamera...";
+      
+      try {
+        streamKamera = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: 'user', width: { ideal: 640 }, height: { ideal: 480 } },
+          audio: false
+        });
+        video.srcObject = streamKamera;
+        
+        loadingKamera.classList.add('opacity-0', 'pointer-events-none');
+        setTimeout(() => loadingKamera.classList.add('hidden'), 400);
+      } catch (err) {
+        console.error("Kamera gagal:", err);
+        loadingKamera.innerHTML = "<span class='text-red-400 text-xs font-bold text-center px-4'>Gagal Akses Kamera.</span>";
+      }
+    }
+
+    // Matikan Kamera
+    function matikanKamera() {
+      if (streamKamera) {
+        streamKamera.getTracks().forEach(track => track.stop());
+        streamKamera = null;
+        video.srcObject = null;
+      }
+    }
+
+    // Generator Waktu Realtime
+    function dapatkanWaktuSekarang() {
+      const hari = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+      const sekarang = new Date();
+      const namaHari = hari[sekarang.getDay()];
+      const tanggal = String(sekarang.getDate()).padStart(2, '0');
+      const bulan = String(sekarang.getMonth() + 1).padStart(2, '0');
+      const tahun = String(sekarang.getFullYear()).slice(-2);
+      
+      let jam = sekarang.getHours();
+      const menit = String(sekarang.getMinutes()).padStart(2, '0');
+      const ampm = jam >= 12 ? 'PM' : 'AM';
+      jam = jam % 12;
+      jam = jam ? jam : 12;
+      const jamStr = String(jam).padStart(2, '0');
+
+      return `${namaHari}, ${tanggal}-${bulan}-${tahun}<br>${jamStr}:${menit} ${ampm}`;
+    }
+
+    // Ambil Foto (Step 1 -> Step 2)
+    btnJepret.addEventListener('click', () => {
+      if (!streamKamera) return;
+
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+      
+      fotoPreview.src = canvas.toDataURL('image/png');
+      fotoPreview.classList.remove('hidden');
+      
+      setTimeout(() => {
+        fotoPreview.classList.add('opacity-100');
+        video.classList.add('opacity-0');
+      }, 50);
+
+      badgeWaktu.innerHTML = dapatkanWaktuSekarang();
+      badgeWaktu.classList.remove('hidden');
+      setTimeout(() => badgeWaktu.classList.add('opacity-100'), 100);
+
+      layerShutter.classList.remove('opacity-100', 'scale-100');
+      layerShutter.classList.add('opacity-0', 'scale-90', 'pointer-events-none');
+      
+      layerKirim.classList.remove('opacity-0', 'scale-90', 'pointer-events-none');
+      layerKirim.classList.add('opacity-100', 'scale-100');
+
+      currentStep = 2;
+    });
+
+    // Kirim & Matikan Kamera (Step 2 -> Step 3)
+    btnKirim.addEventListener('click', () => {
+      if (currentStep !== 2) return;
+      
+      modalSukses.classList.remove('opacity-0', 'scale-95', 'pointer-events-none');
+      modalSukses.classList.add('opacity-100', 'scale-100');
+      
+      matikanKamera();
+      currentStep = 3;
+    });
+
+    // Reset Flow / Tombol Kembali
+    btnBack.addEventListener('click', () => {
+      if (currentStep === 1) return; 
+
+      modalSukses.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
+      modalSukses.classList.remove('opacity-100', 'scale-100');
+
+      fotoPreview.classList.remove('opacity-100');
+      fotoPreview.classList.add('hidden');
+      video.classList.remove('opacity-0');
+
+      badgeWaktu.classList.remove('opacity-100');
+      badgeWaktu.classList.add('hidden');
+
+      layerKirim.classList.remove('opacity-100', 'scale-100'); 
+      layerKirim.classList.add('opacity-0', 'scale-90', 'pointer-events-none');
+      
+      layerShutter.classList.remove('opacity-0', 'scale-90', 'pointer-events-none');
+      layerShutter.classList.add('opacity-100', 'scale-100');
+
+      if (currentStep === 3) {
+        jalankanKamera();
+      }
+
+      currentStep = 1;
+    });
+
+    window.addEventListener('DOMContentLoaded', jalankanKamera);
+  </script>
+</body>
+</html>
