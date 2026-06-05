@@ -73,6 +73,13 @@
   <canvas id="canvasMekanik" class="hidden"></canvas>
 
   <script>
+    // PENGAMANAN HALAMAN & SESI
+    const userNIK = sessionStorage.getItem('userNIK');
+    if (!userNIK) {
+        alert("Sesi habis. Silakan login kembali.");
+        window.location.href = 'index.html';
+    }
+
     const video = document.getElementById('videoKamera');
     const fotoPreview = document.getElementById('fotoPreview');
     const loadingKamera = document.getElementById('loadingKamera');
@@ -91,7 +98,6 @@
     let streamKamera = null;
     let currentStep = 1; 
 
-    // Aktifkan Kamera
     async function jalankanKamera() {
       loadingKamera.classList.remove('hidden', 'opacity-0', 'pointer-events-none');
       loadingText.innerText = "Mengaktifkan Kamera...";
@@ -102,7 +108,6 @@
           audio: false
         });
         video.srcObject = streamKamera;
-        
         loadingKamera.classList.add('opacity-0', 'pointer-events-none');
         setTimeout(() => loadingKamera.classList.add('hidden'), 400);
       } catch (err) {
@@ -111,7 +116,6 @@
       }
     }
 
-    // Matikan Kamera
     function matikanKamera() {
       if (streamKamera) {
         streamKamera.getTracks().forEach(track => track.stop());
@@ -120,7 +124,6 @@
       }
     }
 
-    // Generator Waktu Realtime
     function dapatkanWaktuSekarang() {
       const hari = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
       const sekarang = new Date();
@@ -139,7 +142,6 @@
       return `${namaHari}, ${tanggal}-${bulan}-${tahun}<br>${jamStr}:${menit} ${ampm}`;
     }
 
-    // Ambil Foto (Step 1 -> Step 2)
     btnJepret.addEventListener('click', () => {
       if (!streamKamera) return;
 
@@ -149,11 +151,7 @@
       
       fotoPreview.src = canvas.toDataURL('image/png');
       fotoPreview.classList.remove('hidden');
-      
-      setTimeout(() => {
-        fotoPreview.classList.add('opacity-100');
-        video.classList.add('opacity-0');
-      }, 50);
+      setTimeout(() => { fotoPreview.classList.add('opacity-100'); video.classList.add('opacity-0'); }, 50);
 
       badgeWaktu.innerHTML = dapatkanWaktuSekarang();
       badgeWaktu.classList.remove('hidden');
@@ -161,48 +159,68 @@
 
       layerShutter.classList.remove('opacity-100', 'scale-100');
       layerShutter.classList.add('opacity-0', 'scale-90', 'pointer-events-none');
-      
       layerKirim.classList.remove('opacity-0', 'scale-90', 'pointer-events-none');
       layerKirim.classList.add('opacity-100', 'scale-100');
-
       currentStep = 2;
     });
 
-    // Kirim & Matikan Kamera (Step 2 -> Step 3)
-    btnKirim.addEventListener('click', () => {
+    // INTEGRASI DATABASE AIVEN ADA DI SINI
+    btnKirim.addEventListener('click', async () => {
       if (currentStep !== 2) return;
       
-      modalSukses.classList.remove('opacity-0', 'scale-95', 'pointer-events-none');
-      modalSukses.classList.add('opacity-100', 'scale-100');
-      
-      matikanKamera();
-      currentStep = 3;
+      btnKirim.innerText = "MENGIRIM...";
+      btnKirim.disabled = true;
+
+      try {
+          const response = await fetch('absen_masuk.php', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ nik: userNIK })
+          });
+
+          const result = await response.json();
+
+          if (response.ok && result.status === 'success') {
+              modalSukses.classList.remove('opacity-0', 'scale-95', 'pointer-events-none');
+              modalSukses.classList.add('opacity-100', 'scale-100');
+              matikanKamera();
+              currentStep = 3;
+              
+              // Kembali ke beranda setelah 2 detik
+              setTimeout(() => {
+                  window.location.href = 'beranda.html';
+              }, 2000);
+
+          } else {
+              alert("GAGAL: " + result.message);
+              btnKirim.innerText = "KIRIM";
+              btnKirim.disabled = false;
+          }
+      } catch (error) {
+          alert("Kesalahan Sistem: Tidak dapat terhubung ke database Aiven.");
+          btnKirim.innerText = "KIRIM";
+          btnKirim.disabled = false;
+      }
     });
 
-    // Reset Flow / Tombol Kembali
     btnBack.addEventListener('click', () => {
-      if (currentStep === 1) return; 
-
+      if (currentStep === 1) {
+          window.location.href = 'absensi_pilihan.html';
+          return;
+      }
       modalSukses.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
       modalSukses.classList.remove('opacity-100', 'scale-100');
-
       fotoPreview.classList.remove('opacity-100');
       fotoPreview.classList.add('hidden');
       video.classList.remove('opacity-0');
-
       badgeWaktu.classList.remove('opacity-100');
       badgeWaktu.classList.add('hidden');
-
       layerKirim.classList.remove('opacity-100', 'scale-100'); 
       layerKirim.classList.add('opacity-0', 'scale-90', 'pointer-events-none');
-      
       layerShutter.classList.remove('opacity-0', 'scale-90', 'pointer-events-none');
       layerShutter.classList.add('opacity-100', 'scale-100');
 
-      if (currentStep === 3) {
-        jalankanKamera();
-      }
-
+      if (currentStep === 3) jalankanKamera();
       currentStep = 1;
     });
 

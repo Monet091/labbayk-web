@@ -44,20 +44,23 @@
 
         <section class="grid grid-cols-3 gap-8">
             <div id="btnAbsenMasuk" class="flex flex-col items-center gap-3 cursor-pointer group">
-                <div class="w-20 h-20 bg-[#8b9282] rounded-full flex items-center justify-center text-white shadow-lg group-hover:bg-[#7a8171] transition-all transform group-hover:scale-110">
+                <div
+                    class="w-20 h-20 bg-[#8b9282] rounded-full flex items-center justify-center text-white shadow-lg group-hover:bg-[#7a8171] transition-all transform group-hover:scale-110">
                     <i data-lucide="calendar-days" class="w-10 h-10"></i>
                 </div>
                 <span class="text-sm font-semibold text-gray-900">Absensi</span>
             </div>
-            
+
             <div class="flex flex-col items-center gap-3 cursor-pointer group">
-                <div class="w-20 h-20 bg-[#8b9282] rounded-full flex items-center justify-center text-white shadow-lg group-hover:bg-[#7a8171] transition-all transform group-hover:scale-110">
+                <div
+                    class="w-20 h-20 bg-[#8b9282] rounded-full flex items-center justify-center text-white shadow-lg group-hover:bg-[#7a8171] transition-all transform group-hover:scale-110">
                     <i data-lucide="user-check" class="w-10 h-10"></i>
                 </div>
                 <span class="text-sm font-semibold text-gray-900 text-center">Pengajuan Izin</span>
             </div>
             <div class="flex flex-col items-center gap-3 cursor-pointer group">
-                <div class="w-20 h-20 bg-[#8b9282] rounded-full flex items-center justify-center text-white shadow-lg group-hover:bg-[#7a8171] transition-all transform group-hover:scale-110">
+                <div
+                    class="w-20 h-20 bg-[#8b9282] rounded-full flex items-center justify-center text-white shadow-lg group-hover:bg-[#7a8171] transition-all transform group-hover:scale-110">
                     <i data-lucide="clipboard-list" class="w-10 h-10"></i>
                 </div>
                 <span class="text-sm font-semibold text-gray-900">Laporan</span>
@@ -79,18 +82,22 @@
     </main>
 
     <nav class="fixed bottom-8 left-0 right-0 px-6">
-        <div class="max-w-2xl mx-auto bg-[#f4f6f9]/90 backdrop-blur-md py-4 px-8 rounded-full shadow-2xl flex justify-between items-center border border-white/20">
+        <div
+            class="max-w-2xl mx-auto bg-[#f4f6f9]/90 backdrop-blur-md py-4 px-8 rounded-full shadow-2xl flex justify-between items-center border border-white/20">
             <button class="flex-1 flex justify-center group">
                 <i data-lucide="home" class="w-7 h-7 text-gray-600 group-hover:text-[#8b9282] transition-colors"></i>
             </button>
             <button class="flex-1 flex justify-center group">
-                <i data-lucide="calendar-days" class="w-7 h-7 text-gray-600 group-hover:text-[#8b9282] transition-colors"></i>
+                <i data-lucide="calendar-days"
+                    class="w-7 h-7 text-gray-600 group-hover:text-[#8b9282] transition-colors"></i>
             </button>
             <button class="flex-1 flex justify-center group">
-                <i data-lucide="user-check" class="w-7 h-7 text-gray-600 group-hover:text-[#8b9282] transition-colors"></i>
+                <i data-lucide="user-check"
+                    class="w-7 h-7 text-gray-600 group-hover:text-[#8b9282] transition-colors"></i>
             </button>
             <button class="flex-1 flex justify-center group">
-                <i data-lucide="clipboard-list" class="w-7 h-7 text-gray-600 group-hover:text-[#8b9282] transition-colors"></i>
+                <i data-lucide="clipboard-list"
+                    class="w-7 h-7 text-gray-600 group-hover:text-[#8b9282] transition-colors"></i>
             </button>
             <button class="flex-1 flex justify-center group">
                 <i data-lucide="user" class="w-7 h-7 text-gray-600 group-hover:text-[#8b9282] transition-colors"></i>
@@ -114,34 +121,14 @@
             document.querySelectorAll('p.text-gray-500')[0].innerText = userNIK;
         }
 
-        // 2. LOGIKA TOMBOL ABSEN MASUK
-        document.getElementById('btnAbsenMasuk').addEventListener('click', async function () {
-            if(!confirm("Konfirmasi: Apakah Anda yakin ingin melakukan Absen Masuk sekarang?")) return;
-
-            try {
-                // Tembak file absen_masuk.php
-                const response = await fetch('absen_masuk.php', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ nik: userNIK })
-                });
-
-                const result = await response.json();
-
-                if (response.ok && result.status === 'success') {
-                    alert(result.message); // Notifikasi sukses
-                } else {
-                    alert("GAGAL: " + result.message); // Notifikasi gagal dari server
-                }
-            } catch (error) {
-                alert("Kesalahan Sistem: Tidak dapat terhubung ke database Aiven.");
-                console.error(error);
-            }
+        // 2. LOGIKA TOMBOL ABSENSI
+        document.getElementById('btnAbsenMasuk').addEventListener('click', function () {
+            window.location.href = 'absensi_pilihan.html';
         });
 
         // 3. LOGIKA TOMBOL LOGOUT
         document.getElementById('btnLogout').addEventListener('click', function () {
-            if(confirm("Yakin ingin keluar?")) {
+            if (confirm("Yakin ingin keluar?")) {
                 sessionStorage.clear();
                 window.location.href = 'index.html';
             }
