@@ -51,14 +51,15 @@
                 <span class="text-sm font-semibold text-gray-900">Absensi</span>
             </div>
 
-            <div class="flex flex-col items-center gap-3 cursor-pointer group">
+            <div id="btnPengajuanIzin" class="flex flex-col items-center gap-3 cursor-pointer group">
                 <div
                     class="w-20 h-20 bg-[#8b9282] rounded-full flex items-center justify-center text-white shadow-lg group-hover:bg-[#7a8171] transition-all transform group-hover:scale-110">
                     <i data-lucide="user-check" class="w-10 h-10"></i>
                 </div>
                 <span class="text-sm font-semibold text-gray-900 text-center">Pengajuan Izin</span>
             </div>
-            <div class="flex flex-col items-center gap-3 cursor-pointer group">
+
+            <div id="btnLaporan" class="flex flex-col items-center gap-3 cursor-pointer group">
                 <div
                     class="w-20 h-20 bg-[#8b9282] rounded-full flex items-center justify-center text-white shadow-lg group-hover:bg-[#7a8171] transition-all transform group-hover:scale-110">
                     <i data-lucide="clipboard-list" class="w-10 h-10"></i>
@@ -133,6 +134,16 @@
                 window.location.href = 'index.html';
             }
         });
+
+        // 4. LOGIKA TOMBOL PENGAJUAN IZIN
+        document.getElementById('btnPengajuanIzin').addEventListener('click', function () {
+            window.location.href = 'izin_pilihan.html';
+        });
+
+        // 5. LOGIKA TOMBOL LAPORAN
+        //document.getElementById('btnLaporan').addEventListener('click', function () {
+        //    window.location.href = 'laporan.html';
+        //});
     </script>
 </body>
 

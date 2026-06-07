@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Izin - PT. Labbayk Haramain Travel</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Montserrat', sans-serif; }
+    </style>
+</head>
+<body class="bg-[#a4ad9f] min-h-screen flex flex-col justify-between">
+
+    <div class="w-full flex flex-col flex-grow">
+        
+       <div class="bg-white flex items-center px-6 py-4 shadow-md shrink-0 gap-3">
+        <button onclick="window.location.href='izin_pilihan.html'" class="text-gray-600 hover:text-gray-900 transition-colors mr-1 flex items-center justify-center" aria-label="Kembali">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 md:h-7 md:w-7" fill="none" 
+            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+        </button>
+        <span class="text-gray-900 font-bold text-lg md:text-xl tracking-wider uppercase">Update Izin</span>
+        </div>
+
+        <h2 class="text-[#2a2a2a] text-lg md:text-xl font-bold tracking-normal px-6 pt-6 pb-2 md:px-12 md:pt-8">
+            DAFTAR PENGAJUAN IZIN
+        </h2>
+
+        <div class="bg-white mx-6 my-2 p-4 md:mx-12 md:p-6 rounded shadow-sm overflow-x-auto">
+            <table class="w-full border-collapse text-[11px] md:text-sm text-left text-[#4c4c4c]">
+                <thead>
+                    <tr class="border border-[#7c7c7c] bg-gray-50/50">
+                        <th class="border border-[#7c7c7c] p-2 md:p-3 font-bold">Nama</th>
+                        <th class="border border-[#7c7c7c] p-2 md:p-3 font-bold">Divisi</th>
+                        <th class="border border-[#7c7c7c] p-2 md:p-3 font-bold">Status</th>
+                        <th class="border border-[#7c7c7c] p-2 md:p-3 font-bold text-center">Detail</th>
+                    </tr>
+                </thead>
+                
+                <tbody id="tabel-absen">
+                    <tr>
+                        <td colspan="4" class="text-center p-4 text-gray-500 italic">
+                            Memuat data dari database...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <div class="h-16 md:h-24"></div>
+
+    <script>
+        // 1. SIMULASI DATA DATABASE (Nanti ini diganti dengan URL API asli Anda)
+        // Contoh: const API_URL = "http://localhost/api/get_absensi.php";
+        const API_URL = "simulasi-database"; 
+
+        // Data tiruan yang mensimulasikan isi database Anda
+        const dummyDatabase = [
+            { id: 101, nama: "Claudia Zera Hehamony", divisi: "Marketing", status: "Disetujui" },
+            { id: 102, nama: "Kim Jaeyun", divisi: "Marketing", status: "Tidak Disetujui" },
+            { id: 103, nama: "Kim Mingyu", divisi: "IT", status: "Disetujui" },
+            { id: 104, nama: "Alliya Nasywa Aulia Ruswan", divisi: "Content Creator", status: "Disetujui" }
+        ];
+
+        // 2. FUNGSI UNTUK MENGAMBIL DATA (FETCH)
+        async function ambilDataAbsen() {
+            try {
+                let data;
+
+                if (API_URL === "simulasi-database") {
+                    // Mensimulasikan jeda jaringan selama 1 detik agar terasa seperti fetch asli
+                    data = await new Promise(resolve => setTimeout(() => resolve(dummyDatabase), 1000));
+                } else {
+                    // KODE ASLI: Aktifkan ini jika sudah ada url backend asli
+                    const response = await fetch(API_URL);
+                    if (!response.ok) throw new Error("Gagal mengambil data dari server");
+                    data = await response.json();
+                }
+
+                // Jalankan fungsi untuk merender data ke HTML
+                renderTabel(data);
+
+            } catch (error) {
+                console.error("Error:", error);
+                document.getElementById('tabel-absen').innerHTML = `
+                    <tr>
+                        <td colspan="4" class="text-center p-4 text-red-500 font-semibold">
+                            Gagal memuat data. Silakan coba lagi.
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        // 3. FUNGSI UNTUK MERENDER DATA KEDALAM STRUKTUR TABEL HTML
+        function renderTabel(kumpulanData) {
+            const tbody = document.getElementById('tabel-absen');
+            
+            // Bersihkan isi tabel (menghapus tulisan "Memuat data...")
+            tbody.innerHTML = ""; 
+
+            // Jika data kosong
+            if (kumpulanData.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="4" class="text-center p-4">Tidak ada pengajuan izin.</td></tr>`;
+                return;
+            }
+
+            // Lakukan perulangan (looping) untuk setiap data di database
+            kumpulanData.forEach(item => {
+                // Membuat elemen baris (tr) baru
+                const baris = document.createElement('tr');
+                baris.className = "border border-[#7c7c7c] hover:bg-gray-50/50 transition-colors";
+
+                // Mengisi struktur td di dalam baris tersebut dengan padding dinamis (p-2 di HP, md:p-3 di Laptop)
+                baris.innerHTML = `
+                    <td class="border border-[#7c7c7c] p-2 md:p-3 whitespace-nowrap">${item.nama}</td>
+                    <td class="border border-[#7c7c7c] p-2 md:p-3">${item.divisi}</td>
+                    <td class="border border-[#7c7c7c] p-2 md:p-3 text-[#4CAF50] font-semibold whitespace-nowrap">
+                        <span class="inline-flex items-center">
+                            ${item.status} 
+                            <span class="inline-block w-2 h-2 bg-[#b7b7b7] rounded-full ml-1.5"></span>
+                        </span>
+                    </td>
+                    <td class="border border-[#7c7c7c] p-2 md:p-3 text-center">
+                        <a href="detail_form.html?id=${item.id}" class="text-[#0000ee] underline font-medium hover:text-blue-800">FORM</a>
+                    </td>
+                `;
+
+                // Masukkan baris baru tersebut ke dalam tbody HTML
+                tbody.appendChild(baris);
+            });
+        }
+
+        // 4. JALANKAN FUNGSI KETIKA HALAMAN SELESAI DIMUAT
+        document.addEventListener("DOMContentLoaded", ambilDataAbsen);
+    </script>
+</body>
+</html>
