@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laporan - PT. Labbayk Haramain Travel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght=400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; margin: 0; padding: 0; }
+    </style>
+</head>
+<body class="bg-[#a9af9e] min-h-screen flex flex-col">
+
+    <header class="bg-white px-6 py-4 flex items-center shadow-md shrink-0">
+        <a href="beranda.html" class="text-gray-600 hover:text-gray-900 transition-colors mr-4 flex items-center justify-center">
+            <i data-lucide="arrow-left" class="w-6 h-6 md:w-7 h-7"></i>
+        </a>
+        <h1 class="text-lg md:text-xl font-bold tracking-wider text-gray-900 uppercase">LAPORAN</h1>
+    </header>
+
+    <main class="flex-1 w-full max-w-4xl mx-auto px-6 flex flex-col md:flex-row gap-6 md:gap-8 justify-center items-center pt-10 pb-32 md:pb-40">
+        
+        <!-- Tombol Input -->
+        <button onclick="window.location.href='laporan_input.html'" class="w-full md:flex-1 py-10 md:py-16 bg-[#f4f6f9] rounded-[20px] md:rounded-[25px] shadow-lg text-lg md:text-xl font-bold text-gray-800 uppercase active:scale-95 hover:bg-[#eaf0f6] transition-all flex flex-col items-center gap-4">
+            <div class="w-14 h-14 md:w-20 md:h-20 bg-[#8b9282] rounded-full flex items-center justify-center text-white shadow-md">
+                <i data-lucide="laptop" class="w-6 h-6 md:w-10 md:h-10"></i>
+            </div>
+            <span>Input</span>
+        </button>
+
+        <!-- Tombol History -->
+        <button onclick="window.location.href='laporan_history.html'" class="w-full md:flex-1 py-10 md:py-16 bg-[#f4f6f9] rounded-[20px] md:rounded-[25px] shadow-lg text-lg md:text-xl font-bold text-gray-800 uppercase active:scale-95 hover:bg-[#eaf0f6] transition-all flex flex-col items-center gap-4">
+            <div class="w-14 h-14 md:w-20 md:h-20 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 shadow-sm">
+                <i data-lucide="history" class="w-6 h-6 md:w-10 md:h-10"></i>
+            </div>
+            <span>History</span>
+        </button>
+
+    </main>
+
+    <script>
+        lucide.createIcons();
+        
+        const userNIK = sessionStorage.getItem('userNIK');
+        if (!userNIK) {
+            alert("Anda belum login!");
+            window.location.href = 'index.html';
+        }
+    </script>
+</body>
+</html>
