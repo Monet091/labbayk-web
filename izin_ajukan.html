@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Formulir Pengajuan Izin/Cuti</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
   <script>
     tailwind.config = {
       theme: {
@@ -128,15 +129,20 @@
           ></textarea>
         </div>
 
+        <!-- LAMPIRKAN FILE -->
         <div class="mb-6">
-          <label class="block text-sm font-medium text-gray-800 mb-1">*Attachment</label>
-          <label
-            class="w-full bg-gray-200 rounded px-3 py-2 text-sm text-gray-600 text-center block cursor-pointer hover:bg-gray-300 transition-colors"
-          >
-            INPUT FILE
-            <input type="file" class="hidden" />
+          <label class="block text-sm font-medium text-gray-800 mb-1">Lampirkan File :</label>
+          <label class="max-w-[120px] bg-gray-200 rounded px-3 py-2 text-sm text-gray-600 flex items-center justify-center cursor-pointer hover:bg-gray-300 transition-colors shadow-sm">
+            <i data-lucide="paperclip" class="w-5 h-5 text-gray-700 transform rotate-45"></i>
+            <input type="file" id="fileInput" class="hidden" onchange="updateFileName()" />
           </label>
+          <p id="fileNameDisplay" class="text-xs text-gray-500 mt-2 italic font-semibold"></p>
         </div>
+
+          <script src="https://unpkg.com/lucide@latest"></script>
+          <script>
+            lucide.createIcons();
+          </script>
 
         <div class="flex justify-end">
           <button
@@ -152,4 +158,4 @@
   </div>
 
 </body>
-</html>>
+</html>

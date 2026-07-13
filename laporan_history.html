@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>History Laporan - PT. Labbayk Haramain Travel</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Tambahan Lucide Icons untuk Gambar Folder Lampiran -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght=400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Montserrat', sans-serif; }
+    </style>
+</head>
+<body class="bg-[#a4ad9f] min-h-screen flex flex-col justify-between">
+
+    <div class="w-full flex flex-col flex-grow">
+        
+       <div class="bg-white flex items-center px-6 py-4 shadow-md shrink-0 gap-3">
+        <button onclick="window.location.href='laporan.html'" class="text-gray-600 hover:text-gray-900 transition-colors mr-1 flex items-center justify-center" aria-label="Kembali">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 md:h-7 md:w-7" fill="none" 
+            viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+            </svg>
+        </button>
+        <span class="text-gray-900 font-bold text-lg md:text-xl tracking-wider uppercase">History Laporan</span>
+        </div>
+
+        <!-- Judul Besar Sesuai Gambar Mockup -->
+        <h2 class="text-[#2a2a2a] text-2xl md:text-4xl font-bold tracking-normal px-6 pt-6 pb-2 md:px-12 md:pt-8 uppercase">
+            DAFTAR LAPORAN
+        </h2>
+
+        <div class="bg-white mx-6 my-2 p-4 md:mx-12 md:p-6 rounded shadow-sm overflow-x-auto">
+            <table class="w-full border-collapse text-[11px] md:text-sm text-center text-[#4c4c4c]">
+                <thead>
+                    <!-- Warna Header Atas Tabel Menggunakan Hijau Pastel Lembut Sesuai Gambar -->
+                    <tr class="border border-[#7c7c7c] bg-[#dadfc7]">
+                        <th class="border border-[#7c7c7c] p-2 md:p-3 font-bold text-gray-800">ID-Laporan</th>
+                        <th class="border border-[#7c7c7c] p-2 md:p-3 font-bold text-gray-800">Tanggal</th>
+                        <th class="border border-[#7c7c7c] p-2 md:p-3 font-bold text-gray-800">NIK</th>
+                        <th class="border border-[#7c7c7c] p-2 md:p-3 font-bold text-gray-800">Lampiran</th>
+                        <th class="border border-[#7c7c7c] p-2 md:p-3 font-bold text-gray-800">Status</th>
+                    </tr>
+                </thead>
+                
+                <tbody id="tabel-absen">
+                    <tr>
+                        <td colspan="5" class="text-center p-4 text-gray-500 italic">
+                            Memuat data laporan dari database...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+    <div class="h-16 md:h-24"></div>
+
+    <script>
+        // 1. SIMULASI DATA DATABASE LAPORAN
+        const API_URL = "simulasi-database"; 
+
+        // Data disesuaikan dengan struktur kolom gambar (ID, Tanggal, NIK, File, Tercentang/Tidak)
+        const dummyDatabase = [
+            { idLaporan: "A001", tanggal: "08/11/26", nik: "987654", fileUrl: "dokumen_laporan_1.pdf", statusTercentang: true },
+            { idLaporan: "A002", tanggal: "09/11/26", nik: "987655", fileUrl: "dokumen_laporan_2.pdf", statusTercentang: false },
+            { idLaporan: "", tanggal: "", nik: "", fileUrl: "", statusTercentang: null }, // Baris kosong pelengkap visual mockup
+            { idLaporan: "", tanggal: "", nik: "", fileUrl: "", statusTercentang: null }
+        ];
+
+        // 2. FUNGSI UNTUK MENGAMBIL DATA (FETCH)
+        async function ambilDataAbsen() {
+            try {
+                let data;
+
+                if (API_URL === "simulasi-database") {
+                    data = await new Promise(resolve => setTimeout(() => resolve(dummyDatabase), 800));
+                } else {
+                    const response = await fetch(API_URL);
+                    if (!response.ok) throw new Error("Gagal mengambil data dari server");
+                    data = await response.json();
+                }
+
+                renderTabel(data);
+
+            } catch (error) {
+                console.error("Error:", error);
+                document.getElementById('tabel-absen').innerHTML = `
+                    <tr>
+                        <td colspan="5" class="text-center p-4 text-red-500 font-semibold">
+                            Gagal memuat data laporan. Silakan coba lagi.
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        // Fungsi interaktif saat user menekan ikon folder lampiran
+        function bukaLampiran(namaFile) {
+            if(!namaFile) return;
+            alert("Membuka file lampiran: " + namaFile + "\n(Disini fungsi window.open(fileUrl) berjalan)");
+        }
+
+        // 3. FUNGSI UNTUK MERENDER DATA KEDALAM STRUKTUR TABEL HTML
+        function renderTabel(kumpulanData) {
+            const tbody = document.getElementById('tabel-absen');
+            tbody.innerHTML = ""; 
+
+            if (kumpulanData.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="text-center p-4">Tidak ada data laporan.</td></tr>`;
+                return;
+            }
+
+            kumpulanData.forEach(item => {
+                const baris = document.createElement('tr');
+                baris.className = "border border-[#7c7c7c] hover:bg-gray-50/50 transition-colors h-12";
+
+                // Logika Checkbox Status: jika null (baris kosong) jangan tampilkan checkbox
+                let kolomStatus = "";
+                if (item.statusTercentang !== null) {
+                    kolomStatus = `
+                        <input type="checkbox" ${item.statusTercentang ? 'checked' : ''} 
+                        class="w-4 h-4 text-emerald-600 border-gray-300 rounded focus:ring-emerald-500 accent-[#7A846E] cursor-pointer">
+                    `;
+                }
+
+                // Logika Icon Folder Lampiran: jika field kosong jangan tampilkan folder
+                let kolomLampiran = "";
+                if (item.fileUrl) {
+                    kolomLampiran = `
+                        <button onclick="bukaLampiran('${item.fileUrl}')" class="text-[#8b9282] hover:text-[#7A846E] transition-colors inline-flex justify-center items-center p-1" title="Lihat File">
+                            <i data-lucide="folder" class="w-7 h-7 fill-current"></i>
+                        </button>
+                    `;
+                }
+
+                baris.innerHTML = `
+                    <td class="border border-[#7c7c7c] p-2 md:p-3">${item.idLaporan}</td>
+                    <td class="border border-[#7c7c7c] p-2 md:p-3">${item.tanggal}</td>
+                    <td class="border border-[#7c7c7c] p-2 md:p-3">${item.nik}</td>
+                    <td class="border border-[#7c7c7c] p-1 text-center">${kolomLampiran}</td>
+                    <td class="border border-[#7c7c7c] p-2 text-center">${kolomStatus}</td>
+                `;
+
+                tbody.appendChild(baris);
+            });
+
+            // Re-inisialisasi ikon Lucide agar gambar foldernya muncul sempurna setelah render
+            lucide.createIcons();
+        }
+
+        document.addEventListener("DOMContentLoaded", ambilDataAbsen);
+    </script>
+</body>
+</html>
