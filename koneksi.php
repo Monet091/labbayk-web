@@ -15,4 +15,19 @@
     } catch(PDOException $e) {
         die("Koneksi Database Gagal: " . $e->getMessage());
     }
+
+    //$host = "localhost";
+    //$user = "root";       // Default username untuk server lokal biasanya 'root'
+    //$password = "";       // Default password untuk server lokal biasanya kosong
+    //$dbName = "labbayk_hris"; 
+
+    //try {
+        // Konfigurasi port dan SSL dihapus karena server lokal tidak membutuhkannya
+        //$koneksi = new PDO("mysql:host=$host;dbname=$dbName", $user, $password);
+        
+        //$koneksi->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+        // echo "Koneksi Web ke Labbayk Berhasil!";
+    //} catch(PDOException $e) {
+        //die("Koneksi Database Gagal: " . $e->getMessage());
+    //}
 ?>

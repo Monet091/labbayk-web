@@ -1,4 +1,7 @@
 <?php
+    // TAMBAHAN WAJIB: Memulai sesi PHP di baris paling atas
+    session_start();
+
     // 1. Aturan keamanan biar HTML lo bisa ngakses file ini
     header("Access-Control-Allow-Origin: *");
     header("Content-Type: application/json; charset=UTF-8");
@@ -30,9 +33,11 @@
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if ($user) {
+                // TAMBAHAN WAJIB: Menyimpan NIK ke dalam Session PHP
+                // Ini yang membuat halaman update_izin dan izin_ajukan mengenali siapa yang sedang login
+                $_SESSION['nik'] = $user['NIK'];
+
                 // Mencari nama karyawan di database. 
-                // Kalau nama kolomnya di database teman lo 'nama_karyawan' atau 'nama', tinggal sesuaikan di kanan ini ya.
-                // Untuk sementara kita coba pakai data 'nama' dulu atau field pertama yang ada.
                 $namaUser = isset($user['nama']) ? $user['nama'] : (isset($user['nama_karyawan']) ? $user['nama_karyawan'] : 'Karyawan');
 
                 echo json_encode([
