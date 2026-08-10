@@ -96,7 +96,7 @@ try {
                                     </span>
                                 </td>
                                 <td class="border border-[#7c7c7c] p-2 md:p-3 text-center">
-                                    <a href="detail_form.php?id=<?= isset($row['id_izin']) ? $row['id_izin'] : '' ?>" class="text-[#0000ee] underline font-medium hover:text-blue-800">LIHAT</a>
+                                    <a href="izin_detail_form.php?id=<?= isset($row['id_izin']) ? $row['id_izin'] : '' ?>" class="text-[#0000ee] underline font-medium hover:text-blue-800">LIHAT</a>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

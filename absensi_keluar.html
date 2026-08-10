@@ -107,18 +107,19 @@
     let currentStep = 1; 
     let sudahAbsenMasuk = false; 
 
-    // Mengambil NIK secara dinamis melalui parameter URL (?nik=...)
-    const urlParams = new URLSearchParams(window.location.search);
-    let nik = urlParams.get('nik');
+    // PENGAMANAN HALAMAN & AMBIL SESI DARI LOGIN
+    const nik = sessionStorage.getItem('userNIK');
+    if (!nik) {
+        alert("Sesi habis. Silakan login kembali.");
+        window.location.href = 'index.html';
+    }
 
-    // Fungsi pembantu untuk memicu tampilan modal error bawaan Anda
+    // Fungsi pembantu untuk memicu tampilan modal error
     function tampilkanModalError(pesan) {
       spinner.classList.add('hidden');
-      loadingText.innerText = "Kamera diblokir.";
+      loadingText.innerText = "Terjadi Kesalahan"; // Mengubah pesan agar lebih umum
       
-      // Ubah teks di dalam elemen paragraf modal error asli
       modalError.querySelector('p').innerHTML = pesan;
-      
       modalError.classList.remove('opacity-0', 'scale-95', 'pointer-events-none');
       modalError.classList.add('opacity-100', 'scale-100');
       
@@ -128,30 +129,39 @@
 
     // Inisialisasi Sistem & Integrasi Cek Status ke Database
     async function inisialisasiAbsenKeluar() {
-      if (!nik) {
-        nik = prompt("Silahkan masukkan NIK Anda untuk absen keluar:");
-        if (!nik) {
-          tampilkanModalError("NIK wajib diisi untuk<br>mengakses halaman ini!");
-          return;
-        }
-      }
+      if (!nik) return;
+
+      loadingKamera.classList.remove('hidden', 'opacity-0', 'pointer-events-none');
+      spinner.classList.remove('hidden');
+      loadingText.innerText = "Memeriksa status absensi...";
 
       try {
-        // Memanggil API cek_status_absen.php
-        const response = await fetch(`cek_status_absen.php?nik=${nik}`);
+        const response = await fetch('cek_status_absen.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ nik: nik })
+        });
+        
         const data = await response.json();
+
+        // --- TAMBAHAN PELACAK ERROR ---
+        if (data.status === 'error') {
+            alert("Kesalahan Server: " + data.message);
+            return;
+        }
 
         if (data.sudah_masuk) {
           if (data.sudah_keluar) {
             tampilkanModalError("Anda sudah melakukan<br>absen keluar hari ini!");
           } else {
-            // Kondisi Valid: Sudah masuk & Belum keluar hari ini
             sudahAbsenMasuk = true;
             btnJepret.disabled = false;
             btnJepret.classList.remove('opacity-30', 'cursor-not-allowed');
             jalankanKamera();
           }
         } else {
+          // Jika sistem masih menganggap belum masuk, munculkan peringatan aslinya!
+          alert("INFO SISTEM: " + (data.debug_pesan || "Data tidak ditemukan."));
           tampilkanModalError("Silahkan lakukan<br>absensi masuk!");
         }
       } catch (error) {
@@ -183,7 +193,8 @@
         setTimeout(() => loadingKamera.classList.add('hidden'), 400);
       } catch (err) {
         console.error("Kamera gagal:", err);
-        loadingKamera.innerHTML = "<span class='text-red-400 text-xs font-bold text-center px-4'>Gagal Akses Kamera.</span>";
+        spinner.classList.add('hidden');
+        loadingKamera.innerHTML = `<span class='text-red-400 text-[11px] font-bold text-center px-4'>Kamera Gagal:<br>${err.name} - ${err.message}</span>`;
       }
     }
 
@@ -248,32 +259,54 @@
     btnKirim.addEventListener('click', async () => {
       if (currentStep !== 2) return;
       
+      btnKirim.innerText = "MENGIRIM...";
+      btnKirim.disabled = true;
+      
+      // MENGAMBIL DATA FOTO DARI CANVAS SEBELUM KAMERA DIMATIKAN
+      const dataFotoBase64 = canvas.toDataURL('image/png');
+
       try {
-        const response = await fetch('absen_keluar.php', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ nik: nik })
+        const response = await fetch('absen_keluar.php', { 
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+                nik: nik,
+                foto: dataFotoBase64 
+            })
         });
+
         const hasil = await response.json();
 
-        if (hasil.status === 'success') {
-          // Tampilkan Modal Sukses Asli Anda jika API berhasil merespon sukses
+        if (response.ok && hasil.status === 'success') {
           modalSukses.classList.remove('opacity-0', 'scale-95', 'pointer-events-none');
           modalSukses.classList.add('opacity-100', 'scale-100');
+          
+          // KAMERA DIMATIKAN SETELAH PENGIRIMAN BERHASIL
           matikanKamera();
           currentStep = 3;
+          
+          setTimeout(() => {
+              window.location.href = 'beranda.html';
+          }, 2000);
         } else {
-          alert(hasil.message);
+          alert("GAGAL: " + (hasil.message || "Terjadi kesalahan."));
+          btnKirim.innerText = "KIRIM";
+          btnKirim.disabled = false;
         }
       } catch (error) {
         console.error("Gagal memproses kirim data:", error);
         alert("Terjadi kesalahan jaringan saat mengirim data absensi.");
+        btnKirim.innerText = "KIRIM";
+        btnKirim.disabled = false;
       }
     });
 
     // Reset Flow / Tombol Kembali
     btnBack.addEventListener('click', () => {
-      if (currentStep === 1) return; 
+      if (currentStep === 1) {
+          window.location.href = 'absensi_pilihan.html';
+          return;
+      }
 
       modalSukses.classList.add('opacity-0', 'scale-95', 'pointer-events-none');
       modalSukses.classList.remove('opacity-100', 'scale-100');
@@ -296,6 +329,8 @@
       }
 
       currentStep = 1;
+      btnKirim.innerText = "KIRIM";
+      btnKirim.disabled = false;
     });
 
     // Jalankan validasi saat halaman dimuat

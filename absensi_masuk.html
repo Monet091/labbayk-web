@@ -164,7 +164,7 @@
       currentStep = 2;
     });
 
-    // INTEGRASI DATABASE AIVEN ADA DI SINI
+    // INTEGRASI DATABASE (MENGIRIM FOTO BASE64)
     btnKirim.addEventListener('click', async () => {
       if (currentStep !== 2) return;
       
@@ -172,10 +172,15 @@
       btnKirim.disabled = true;
 
       try {
+          const dataFotoBase64 = canvas.toDataURL('image/png');
+
           const response = await fetch('absen_masuk.php', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ nik: userNIK })
+              body: JSON.stringify({ 
+                nik: userNIK,
+                foto: dataFotoBase64 // Foto wajib terkirim ke PHP
+              })
           });
 
           const result = await response.json();
@@ -186,18 +191,17 @@
               matikanKamera();
               currentStep = 3;
               
-              // Kembali ke beranda setelah 2 detik
               setTimeout(() => {
                   window.location.href = 'beranda.html';
               }, 2000);
 
           } else {
-              alert("GAGAL: " + result.message);
+              alert("GAGAL: " + (result.message || "Pastikan database sudah siap."));
               btnKirim.innerText = "KIRIM";
               btnKirim.disabled = false;
           }
       } catch (error) {
-          alert("Kesalahan Sistem: Tidak dapat terhubung ke database Aiven.");
+          alert("Kesalahan Sistem: Tidak dapat terhubung ke server.");
           btnKirim.innerText = "KIRIM";
           btnKirim.disabled = false;
       }

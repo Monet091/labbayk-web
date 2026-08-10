@@ -125,7 +125,8 @@ if(strtolower($status_tampil) == 'ditolak') $warna_status = "text-red-600";
                 <span class="text-sm text-gray-700 truncate mr-4 font-medium">
                     <?= htmlspecialchars($data_izin['file_surat_dokter']) ?>
                 </span>
-                <a href="uploads/<?= htmlspecialchars($data_izin['file_surat_dokter']) ?>" target="_blank" 
+                <!-- PERBAIKAN: Mengarahkan tautan dokumen ke folder uploads/izin/ -->
+                <a href="uploads/izin/<?= htmlspecialchars($data_izin['file_surat_dokter']) ?>" target="_blank" 
                    class="bg-[#7A846E] hover:bg-[#666f5c] text-white text-xs font-bold py-2 px-4 rounded transition-colors whitespace-nowrap shadow-sm">
                     Lihat Dokumen
                 </a>

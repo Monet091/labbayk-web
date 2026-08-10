@@ -19,14 +19,23 @@ if (isset($_POST['submit_izin'])) {
 
     // Logika Upload Attachment
     if (isset($_FILES['file_surat_dokter']) && $_FILES['file_surat_dokter']['error'] == 0) {
-        $target_dir = "uploads/";
+        $target_dir = "uploads/izin/";
         
-        // Buat folder uploads jika belum ada
+        // Buat folder uploads/izin jika belum ada
         if (!file_exists($target_dir)) {
             mkdir($target_dir, 0777, true);
         }
 
-        $nama_file = time() . "_" . basename($_FILES["file_surat_dokter"]["name"]);
+        // 1. Ambil nama file asli dan hapus spasi agar link tidak rusak
+        $nama_asli = basename($_FILES["file_surat_dokter"]["name"]);
+        $nama_asli = str_replace(" ", "_", $nama_asli); 
+        
+        // 2. Pastikan zona waktu sesuai dengan Jakarta (sama seperti absensi)
+        date_default_timezone_set('Asia/Jakarta');
+        
+        // 3. Format penamaan baru: NIK_TahunBulanTanggal_JamMenitDetik_IZIN_NamaFileAsli
+        // Contoh hasil: 00192_20260810_154447_IZIN_Surat_Dokter_Klinik.pdf
+        $nama_file = $nik . "_" . date("Ymd_His") . "_IZIN_" . $nama_asli;
         $target_file = $target_dir . $nama_file;
         
         move_uploaded_file($_FILES["file_surat_dokter"]["tmp_name"], $target_file);
