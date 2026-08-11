@@ -6,131 +6,119 @@
   <title>Input Laporan - PT. Labbayk Haramain Travel</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            'olive': '#7A846E',
-          }
-        }
-      }
-    }
-  </script>
   <style>
-    /* Menyembunyikan icon kalender bawaan browser agar lebih rapi */
     input[type="date"]::-webkit-calendar-picker-indicator {
-      opacity: 0;
-      position: absolute;
-      right: 0;
-      width: 100%;
-      height: 100%;
-      cursor: pointer;
+      opacity: 0; position: absolute; right: 0; width: 100%; height: 100%; cursor: pointer;
     }
     body { font-family: 'Montserrat', sans-serif; }
   </style>
 </head>
-<body class="min-h-screen bg-white flex flex-col">
+<body class="min-h-screen bg-[#a4ad9f] flex flex-col relative">
 
   <div class="w-full flex flex-col flex-grow">
-
-    <!-- HEADER: Warna hijau sesuai desain -->
-    <div class="bg-[#a4ad9f] flex items-center px-6 py-4 shadow-md shrink-0 gap-3">
-      <!-- Tombol kembali (bisa lu sesuaikan href-nya kalau mau balik ke menu utama) -->
-      <button onclick="window.location.href='laporan.html'" class="text-white hover:text-gray-200 transition-colors mr-1 flex items-center justify-center" aria-label="Kembali">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 md:h-7 md:w-7" fill="none" 
-          viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-        </svg>
+    <div class="bg-white flex items-center px-6 py-4 shadow-md shrink-0 gap-3">
+      <button onclick="window.location.href='laporan.html'" class="text-gray-600 hover:text-gray-900 transition-colors mr-1 flex items-center justify-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 md:h-7 md:w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
       </button>
-      <span class="text-white font-bold text-lg md:text-xl tracking-wider capitalize">Laporan</span>
+      <span class="text-gray-900 font-bold text-lg md:text-xl tracking-wider capitalize">Laporan</span>
     </div>
 
-    <!-- FORM BODY: Konten menyatu langsung ke latar layar -->
     <div class="px-5 py-5 max-w-xl mx-auto w-full flex-1 mt-4">
-
-      <!-- Form Action mengarah ke file PHP untuk memproses database -->
-      <form action="simpan_laporan.php" method="POST" enctype="multipart/form-data">
-
-        <!-- NIK -->
+      <form action="simpan_laporan.php" method="POST" enctype="multipart/form-data" id="formLaporan">
         <div class="mb-4">
-          <label class="block text-sm font-medium text-gray-800 mb-1">NIK :</label>
-          <input
-            type="text"
-            name="nik"
-            required
-            class="w-full bg-[#e5e7eb] rounded-none px-3 py-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#7A846E]"
-          />
+          <label class="block text-sm font-bold text-gray-900 mb-1">NIK :</label>
+          <input type="text" name="nik" id="inputNik" required class="w-full bg-[#e5e7eb] rounded-none px-3 py-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-white" />
         </div>
-
-        <!-- TANGGAL -->
         <div class="mb-4">
-          <label class="block text-sm font-medium text-gray-800 mb-1">Tanggal :</label>
+          <label class="block text-sm font-bold text-gray-900 mb-1">Tanggal :</label>
           <div class="relative">
-            <input
-              type="date"
-              name="tanggal"
-              required
-              class="w-full bg-[#e5e7eb] rounded-none px-3 py-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#7A846E] pr-10"
-            />
+            <input type="date" name="tanggal" required class="w-full bg-[#e5e7eb] rounded-none px-3 py-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-white pr-10" />
             <span class="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-gray-500">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
-                viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round"
-                  d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-              </svg>
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
             </span>
           </div>
         </div>
-
-        <!-- DESKRIPSI PEKERJAAN -->
         <div class="mb-4">
-          <label class="block text-sm font-medium text-gray-800 mb-1">Deskripsi Pekerjaan :</label>
-          <textarea
-            name="deskripsi_pekerjaan"
-            rows="5"
-            required
-            class="w-full bg-[#e5e7eb] rounded-none px-3 py-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-[#7A846E] resize-none"
-          ></textarea>
+          <label class="block text-sm font-bold text-gray-900 mb-1">Deskripsi Pekerjaan :</label>
+          <textarea name="deskripsi_pekerjaan" rows="5" required class="w-full bg-[#e5e7eb] rounded-none px-3 py-3 text-sm text-gray-700 focus:outline-none focus:ring-2 focus:ring-white resize-none"></textarea>
         </div>
-
-        <!-- LAMPIRKAN FILE -->
         <div class="mb-8">
-          <label class="block text-sm font-medium text-gray-800 mb-1">Lampirkan File :</label>
-          <label class="w-[80px] h-[40px] bg-[#e5e7eb] flex items-center justify-center cursor-pointer hover:bg-gray-300 transition-colors">
+          <label class="block text-sm font-bold text-gray-900 mb-1">Lampirkan File :</label>
+          <label class="w-[80px] h-[40px] bg-white flex items-center justify-center cursor-pointer hover:bg-gray-100 transition-colors shadow-sm">
             <i data-lucide="paperclip" class="w-5 h-5 text-gray-700 transform rotate-45"></i>
             <input type="file" name="file_laporan" id="fileInput" class="hidden" onchange="updateFileName()" />
           </label>
-          <p id="fileNameDisplay" class="text-xs text-gray-500 mt-2 italic font-semibold"></p>
+          <p id="fileNameDisplay" class="text-xs text-gray-900 mt-2 italic font-semibold"></p>
         </div>
-
-        <!-- TOMBOL SIMPAN -->
         <div class="flex justify-end mt-4">
-          <button
-            type="submit"
-            class="bg-[#e5e7eb] hover:bg-gray-300 text-gray-800 font-semibold text-sm px-6 py-2 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-[#7A846E]"
-          >
-            SIMPAN
-          </button>
+          <!-- Tombol pakai JS biar bisa dicegat -->
+          <button type="button" onclick="validasiDanKirim()" class="bg-white hover:bg-gray-100 text-[#7A846E] font-bold text-sm px-6 py-2 shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-white">SIMPAN</button>
         </div>
-
       </form>
     </div>
   </div>
 
-  <script>
-    // Memuat icon dari Lucide
-    lucide.createIcons();
+  <!-- POP-UP MODAL KOSONG -->
+  <div id="modalKosong" class="fixed inset-0 flex items-center justify-center bg-black/40 hidden z-50 backdrop-blur-sm">
+    <div class="bg-[#dadfc7] p-6 rounded shadow-xl relative max-w-[280px] w-full mx-4">
+      <button type="button" onclick="tutupSemuaModal()" class="absolute top-3 right-3 bg-[#8b9282] text-black w-7 h-7 flex items-center justify-center font-bold shadow-sm hover:bg-gray-500 transition-colors">X</button>
+      <p class="text-black font-bold text-[17px] leading-snug mt-4 pr-6">LAPORAN KOSONG<br>Silahkan isi dan upload laporan !</p>
+    </div>
+  </div>
 
-    // Fungsi handle tulisan nama file setelah dipilih
+  <!-- POP-UP MODAL NIK SALAH -->
+  <div id="modalNikSalah" class="fixed inset-0 flex items-center justify-center bg-black/40 hidden z-50 backdrop-blur-sm">
+    <div class="bg-[#dadfc7] p-6 rounded shadow-xl relative max-w-[280px] w-full mx-4">
+      <button type="button" onclick="tutupSemuaModal()" class="absolute top-3 right-3 bg-[#8b9282] text-black w-7 h-7 flex items-center justify-center font-bold shadow-sm hover:bg-gray-500 transition-colors">X</button>
+      <p class="text-black font-bold text-[17px] leading-snug mt-4 pr-6">AKSES DITOLAK<br>NIK tidak sesuai dengan akun Anda!</p>
+    </div>
+  </div>
+
+  <script>
+    lucide.createIcons();
+    let nikYangLagiLogin = "";
+
+    async function ambilSessionUser() {
+        try {
+            const response = await fetch('get_session.php');
+            const data = await response.json();
+            nikYangLagiLogin = data.nik; 
+        } catch(error) { console.error("Gagal menarik session"); }
+    }
+    document.addEventListener("DOMContentLoaded", ambilSessionUser);
+
     function updateFileName() {
       const input = document.getElementById('fileInput');
       const display = document.getElementById('fileNameDisplay');
-      if (input.files.length > 0) {
-        display.innerText = "📎 File siap dikirim: " + input.files[0].name;
-      } else {
-        display.innerText = "";
+      if (input.files.length > 0) display.innerText = "📎 File siap dikirim: " + input.files[0].name;
+      else display.innerText = "";
+    }
+
+    function validasiDanKirim() {
+      const input = document.getElementById('fileInput');
+      const nikDiketik = document.getElementById('inputNik').value.trim();
+      const form = document.getElementById('formLaporan');
+
+      if(nikDiketik === "") { alert("Isi NIK terlebih dahulu!"); return; }
+      if(nikYangLagiLogin === "") { alert("Loading akun... Klik simpan sekali lagi."); return; }
+
+      // CEGAT KALAU NIK BEDA
+      if (nikDiketik !== nikYangLagiLogin) {
+        document.getElementById('modalNikSalah').classList.remove('hidden'); 
+        return; 
       }
+      // CEGAT KALAU FILE KOSONG
+      if (input.files.length === 0) {
+        document.getElementById('modalKosong').classList.remove('hidden'); 
+        return; 
+      }
+      // LOLOS SEMUA -> KIRIM
+      form.submit();
+    }
+
+    function tutupSemuaModal() {
+      document.getElementById('modalKosong').classList.add('hidden');
+      document.getElementById('modalNikSalah').classList.add('hidden');
     }
   </script>
 </body>

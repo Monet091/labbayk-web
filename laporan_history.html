@@ -8,25 +8,21 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <style> body { font-family: 'Montserrat', sans-serif; } </style>
 </head>
-<body class="bg-white min-h-screen flex flex-col justify-between">
-
+<body class="bg-[#a4ad9f] min-h-screen flex flex-col justify-between">
     <div class="w-full flex flex-col flex-grow">
-       <div class="bg-[#a4ad9f] flex items-center px-6 py-4 shadow-md shrink-0 gap-3 border-b border-gray-300">
-        <button onclick="window.location.href='laporan.html'" class="text-white hover:text-gray-200 transition-colors mr-1 flex items-center justify-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 md:h-7 md:w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
+       <!-- HEADER -->
+       <div class="bg-white flex items-center px-6 py-4 shadow-md shrink-0 gap-3 border-b border-gray-300">
+        <button onclick="window.location.href='laporan.html'" class="text-gray-600 hover:text-gray-900 transition-colors mr-1 flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 md:h-7 md:w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
         </button>
-        <span class="text-white font-bold text-lg md:text-xl tracking-wider capitalize">Laporan</span>
+        <span class="text-gray-900 font-bold text-lg md:text-xl tracking-wider capitalize">Laporan</span>
         </div>
 
-        <h2 class="text-[#2a2a2a] text-2xl md:text-4xl font-bold tracking-normal px-6 pt-6 pb-2 md:px-12 md:pt-8 uppercase">
-            DAFTAR LAPORAN
-        </h2>
+        <h2 class="text-white text-2xl md:text-4xl font-bold tracking-normal px-6 pt-6 pb-2 md:px-12 md:pt-8 uppercase">DAFTAR LAPORAN</h2>
 
-        <!-- Pembungkus tabel menyatu dengan layar tanpa frame tambahan -->
+        <!-- TABEL -->
         <div class="mx-6 my-2 md:mx-12 overflow-x-auto">
-            <table class="w-full border-collapse text-[11px] md:text-sm text-center text-[#4c4c4c]">
+            <table class="w-full bg-white border-collapse text-[11px] md:text-sm text-center text-[#4c4c4c]">
                 <thead>
                     <tr class="border border-[#7c7c7c] bg-[#dadfc7]">
                         <th class="border border-[#7c7c7c] p-2 md:p-3 font-bold text-gray-800">ID-Laporan</th>
@@ -37,7 +33,7 @@
                     </tr>
                 </thead>
                 <tbody id="tabel-absen">
-                    <tr><td colspan="5" class="text-center p-4 text-gray-500 italic">Memuat data dari database...</td></tr>
+                    <tr><td colspan="5" class="text-center p-4 text-gray-800 italic font-medium">Memuat data dari database...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -45,15 +41,14 @@
     <div class="h-16 md:h-24"></div>
 
     <script>
-        // Murni hanya melakukan fetch ke PHP tanpa ada simulasi dummy
         async function ambilDataAbsen() {
             try {
-                const response = await fetch("get_laporan.php");
+                const response = await fetch("get_laporanHistory.php");
                 if (!response.ok) throw new Error("Gagal terhubung ke server");
                 const data = await response.json();
                 renderTabel(data);
             } catch (error) {
-                document.getElementById('tabel-absen').innerHTML = `<tr><td colspan="5" class="text-center p-4 text-red-500">Gagal memuat database. Pastikan XAMPP (MySQL) menyala.</td></tr>`;
+                document.getElementById('tabel-absen').innerHTML = `<tr><td colspan="5" class="text-center p-4 text-red-700 font-bold">Gagal memuat database.</td></tr>`;
             }
         }
 
@@ -63,45 +58,36 @@
             const tbody = document.getElementById('tabel-absen');
             tbody.innerHTML = ""; 
 
-            let rowCount = 0;
-
-            // Render data asli dari database jika ada
+            // Cek apakah ada data laporan
             if (kumpulanData && kumpulanData.length > 0) {
                 kumpulanData.forEach(item => {
-                    let kolomLampiran = item.fileUrl ? `<button onclick="bukaLampiran('${item.fileUrl}')" class="text-[#8b9282] hover:text-[#7A846E] inline-flex items-center"><i data-lucide="folder" class="w-6 h-6 fill-current"></i></button>` : `<span class="text-gray-400 font-bold">-</span>`;
+                    let kolomLampiran = item.fileUrl ? `<button onclick="bukaLampiran('${item.fileUrl}')" class="text-gray-700 hover:text-black transition-colors inline-flex items-center"><i data-lucide="folder" class="w-6 h-6 fill-current"></i></button>` : `<span class="text-gray-400 font-bold">-</span>`;
                     
                     tbody.innerHTML += `
-                        <tr class="border border-[#7c7c7c] hover:bg-gray-50/50 h-10 md:h-12">
-                            <td class="border border-[#7c7c7c] p-1 md:p-2">${item.idLaporan}</td>
-                            <td class="border border-[#7c7c7c] p-1 md:p-2">${item.tanggal}</td>
-                            <td class="border border-[#7c7c7c] p-1 md:p-2">${item.nik}</td>
+                        <tr class="border border-[#7c7c7c] hover:bg-gray-50 transition-colors h-10 md:h-12">
+                            <td class="border border-[#7c7c7c] p-1 md:p-2 text-gray-900 font-medium">${item.idLaporan}</td>
+                            <td class="border border-[#7c7c7c] p-1 md:p-2 text-gray-900">${item.tanggal}</td>
+                            <td class="border border-[#7c7c7c] p-1 md:p-2 text-gray-900">${item.nik}</td>
                             <td class="border border-[#7c7c7c] p-1 text-center">${kolomLampiran}</td>
                             <td class="border border-[#7c7c7c] p-1 text-center">
-                                <input type="checkbox" class="w-4 h-4 text-emerald-600 border-gray-400 rounded accent-[#7A846E] cursor-pointer">
+                                <input type="checkbox" disabled class="w-4 h-4 text-emerald-600 border-gray-400 rounded cursor-not-allowed opacity-50">
                             </td>
                         </tr>
                     `;
-                    rowCount++;
                 });
-            }
-
-            // Tambahkan baris kosong sebagai padding agar tabel tetap berbentuk kotak rapi seperti desain Figma
-            while (rowCount < 4) {
-                tbody.innerHTML += `
-                    <tr class="border border-[#7c7c7c] h-10 md:h-12">
-                        <td class="border border-[#7c7c7c]"></td>
-                        <td class="border border-[#7c7c7c]"></td>
-                        <td class="border border-[#7c7c7c]"></td>
-                        <td class="border border-[#7c7c7c]"></td>
-                        <td class="border border-[#7c7c7c]"></td>
+            } else {
+                // JIKA DATA KOSONG, TAMPILKAN PESAN INI (Tanpa baris-baris kosong)
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="5" class="border border-[#7c7c7c] text-center p-6 text-gray-500 italic">
+                            Belum ada riwayat laporan.
+                        </td>
                     </tr>
                 `;
-                rowCount++;
             }
             lucide.createIcons();
         }
         
-        // Panggil fungsi secara otomatis saat halaman dimuat
         document.addEventListener("DOMContentLoaded", ambilDataAbsen);
     </script>
 </body>
