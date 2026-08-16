@@ -8,7 +8,7 @@
     <style>
         .bg-custom {
             /* Pastikan file gambar berada di folder yang sama */
-            background-image: url('background.jpg'); 
+            background-image: url('background.jpeg'); 
             background-position: center;
             background-repeat: repeat;
             background-size: 200px;
@@ -22,7 +22,7 @@
         
         <div class="mb-8 text-center text-white">
             <div class="w-16 h-16 bg-white rounded-full flex items-center justify-center mx-auto mb-2 overflow-hidden shadow-lg">
-                 <img src="logo.jpg" alt="Logo Labbayk" class="w-full h-full object-contain"> 
+                 <img src="logo 3.png" alt="Logo Labbayk" class="w-full h-full object-contain"> 
             </div>
             <h2 class="font-serif text-lg tracking-widest uppercase">Labbayk</h2>
             <p class="text-[10px] tracking-[0.2em] uppercase">Tour & Travel</p>
@@ -31,26 +31,84 @@
         <div class="bg-white w-full rounded-[25px] p-8 shadow-inner">
             <h1 class="text-xl font-bold mb-6 text-black">LOGIN</h1>
 
-            <form action="beranda.html" method="POST">
+            <!-- Ganti form tag lama dengan ini -->
+            <form id="loginForm" onsubmit="return false;">
                 <div class="mb-4">
-                    <label class="block text-sm font-bold text-black mb-1" for="username">User ID</label>
-                    <input class="w-full bg-[#d9d9d9] border-none p-2 rounded focus:ring-2 focus:ring-[#8e937d] outline-none" 
-                           type="text" id="username" name="username" required>
+                    <label class="block text-sm font-bold text-black mb-1">User ID</label>
+                    <input class="w-full bg-[#d9d9d9] border-none p-2 rounded focus:ring-2 
+                                focus:ring-[#8e937d] outline-none"
+                        type="text" id="username" required>
                 </div>
-
                 <div class="mb-8">
-                    <label class="block text-sm font-bold text-black mb-1" for="password">Password</label>
-                    <input class="w-full bg-[#d9d9d9] border-none p-2 rounded focus:ring-2 focus:ring-[#8e937d] outline-none" 
-                           type="password" id="password" name="password" required>
+                    <label class="block text-sm font-bold text-black mb-1">Password</label>
+                    <input class="w-full bg-[#d9d9d9] border-none p-2 rounded focus:ring-2 
+                                focus:ring-[#8e937d] outline-none"
+                        type="password" id="password" required>
                 </div>
-
+                <p id="errorMsg" class="text-red-500 text-xs mb-2 hidden">
+                    NIK atau password salah.
+                </p>
                 <div class="flex justify-end">
-                    <button type="submit" 
-                            class="bg-[#d9d9d9] hover:bg-gray-300 text-black font-bold py-1 px-6 rounded border border-gray-400 shadow-sm">
+                    <button onclick="doLogin()"
+                            class="bg-[#d9d9d9] hover:bg-gray-300 text-black font-bold 
+                                py-1 px-6 rounded border border-gray-400 shadow-sm">
                         LOGIN
                     </button>
                 </div>
             </form>
+
+            <script>
+                async function doLogin() {
+                    // Ambil inputan
+                    const nik = document.getElementById('username').value.trim();
+                    const pass = document.getElementById('password').value.trim();
+                    const err = document.getElementById('errorMsg');
+                    const btn = document.querySelector('button');
+
+                    if (!nik || !pass) {
+                        err.innerText = "NIK dan Password wajib diisi.";
+                        err.classList.remove('hidden');
+                        return;
+                    }
+
+                    // Ubah tombol jadi loading
+                    btn.innerText = "LOADING...";
+                    btn.disabled = true;
+                    err.classList.add('hidden');
+
+                    try {
+                        // Tembak ke Jembatan PHP
+                        const response = await fetch('koneksi_login.php', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ nik: nik, password: pass })
+                        });
+
+                        const result = await response.json();
+
+                        if (response.ok && result.status === 'success') {
+                            // Jika Aiven bilang YES, simpan sesi dan pindah halaman
+                            sessionStorage.setItem('userNIK', nik);
+                            sessionStorage.setItem('userNama', result.nama);
+                            window.location.href = 'beranda.html';
+                        } else {
+                            // Jika Aiven bilang NO (Password salah)
+                            err.innerText = result.message || "NIK atau password salah.";
+                            err.classList.remove('hidden');
+                            btn.innerText = "LOGIN";
+                            btn.disabled = false;
+                        }
+                    } catch (error) {
+                        // Jika file PHP tidak ketemu atau server mati
+                        err.innerText = "Terjadi kesalahan sistem. Coba lagi nanti.";
+                        err.classList.remove('hidden');
+                        btn.innerText = "LOGIN";
+                        btn.disabled = false;
+                    }
+                }
+            </script>
         </div>
         
     </div>
