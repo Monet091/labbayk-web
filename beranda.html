@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Karyawan - Full Screen</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
@@ -69,38 +70,115 @@
         </section>
 
         <section class="flex flex-col gap-6">
-            <div class="bg-[#f4f6f9] p-8 rounded-[25px] shadow-sm hover:shadow-md transition-shadow min-h-[150px]">
-                <h3 class="text-lg font-bold text-gray-700 border-b border-gray-200 pb-2 mb-4">Pemberitahuan</h3>
-                <p class="text-gray-400 italic">Belum ada pemberitahuan terbaru.</p>
+            <div class="bg-[#f4f6f9] p-6 md:p-8 rounded-[25px] shadow-sm hover:shadow-md transition-shadow flex flex-col max-h-[300px]">
+            <div class="flex justify-between items-center border-b border-gray-200 pb-3 mb-4 shrink-0">
+                <h3 class="text-lg font-bold text-gray-700">Pemberitahuan</h3>
+                <span class="bg-red-500 text-white text-[10px] font-bold px-2 py-1 rounded-full">1 Baru</span>
             </div>
 
-            <div class="bg-[#f4f6f9] p-8 rounded-[25px] shadow-sm hover:shadow-md transition-shadow min-h-[150px]">
-                <h3 class="text-lg font-bold text-gray-700 border-b border-gray-200 pb-2 mb-4">Sistem</h3>
-                <p class="text-gray-400 italic">Status sistem: Normal.</p>
+            <!-- Area yang bisa di-scroll jika notifikasi banyak -->
+            <div class="flex-col gap-3 overflow-y-auto pr-2 custom-scrollbar flex-1">
+                
+                <!-- Contoh Notifikasi 1 (Belum Dibaca) -->
+                <a href="izin_update.php" class="flex items-start gap-3 p-3 bg-white rounded-xl shadow-sm border-l-4 border-emerald-500 hover:bg-gray-50 transition-colors cursor-pointer relative">
+                    <div class="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center shrink-0 mt-0.5">
+                        <i data-lucide="check-circle" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm font-bold text-gray-800 leading-tight">Pengajuan Izin Disetujui</p>
+                        <p class="text-xs text-gray-500 mt-1">Izin sakit Anda untuk tanggal 20-21 Agustus telah di-ACC oleh admin.</p>
+                        <p class="text-[10px] text-gray-400 mt-2 font-medium">Baru saja</p>
+                    </div>
+                    <!-- Titik merah penanda belum dibaca -->
+                    <div class="w-2.5 h-2.5 bg-red-500 rounded-full absolute top-3 right-3 shadow-sm"></div>
+                </a>
+
+                <!-- Contoh Notifikasi 2 (Sudah Dibaca) -->
+                <a href="#" class="flex items-start gap-3 p-3 bg-transparent rounded-xl hover:bg-gray-100 transition-colors cursor-pointer">
+                    <div class="w-8 h-8 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center shrink-0 mt-0.5">
+                        <i data-lucide="megaphone" class="w-5 h-5"></i>
+                    </div>
+                    <div>
+                        <p class="text-sm font-semibold text-gray-700 leading-tight">Jadwal Cek Kesehatan</p>
+                        <p class="text-xs text-gray-500 mt-1">Pemeriksaan kesehatan tahunan karyawan akan diadakan esok hari.</p>
+                        <p class="text-[10px] text-gray-400 mt-2">Kemarin, 14:00 WIB</p>
+                    </div>
+                </a>
+
+            </div>
+        </div>
+
+            <!-- Ringkasan Personal & Grafik Tingkat Kehadiran -->
+            <div class="bg-[#f4f6f9] p-6 md:p-8 rounded-[25px] shadow-sm hover:shadow-md transition-shadow flex flex-col gap-8">
+                
+                <!-- Bagian Teks Ringkasan -->
+                <div class="flex flex-col gap-4">
+                    <h3 class="text-sm font-black text-gray-700 uppercase tracking-widest border-b border-gray-300 pb-2">Ringkasan Hari Ini</h3>
+                    
+                    <div class="grid grid-cols-2 gap-y-4 gap-x-2">
+                        <div class="flex flex-col">
+                            <span class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Jadwal Kerja</span>
+                            <span class="text-sm font-extrabold text-gray-900">08:00 - 17:00 WIB</span>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Sisa Cuti</span>
+                            <span class="text-sm font-extrabold text-gray-900">12 Hari</span>
+                        </div>
+                        <div class="flex flex-col col-span-2">
+                            <span class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Status Saat Ini</span>
+                            <div class="flex items-center gap-2 mt-0.5">
+                                <div class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></div>
+                                <span class="text-sm font-extrabold text-emerald-800">Sudah Absen Masuk (08:15 WIB)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bagian Grafik Donat -->
+                <div class="flex flex-col items-center">
+                    <h3 class="text-sm font-black text-gray-700 uppercase tracking-widest border-b border-gray-300 pb-2 w-full text-left mb-6">Tingkat Kehadiran</h3>
+                    
+                    <!-- Wadah Canvas Grafik -->
+                    <div class="w-full max-w-[200px] aspect-square relative">
+                        <canvas id="kehadiranChart"></canvas>
+                        
+                        <!-- Teks Persentase di Tengah Donat -->
+                        <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none mt-[-15px]">
+                            <span id="teksPersentase" class="text-3xl font-black text-gray-800">85%</span>
+                            <span class="text-[9px] font-extrabold text-gray-500 uppercase tracking-wider">Hadir</span>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </section>
 
     </main>
 
     <nav class="fixed bottom-8 left-0 right-0 px-6">
-        <div
-            class="max-w-2xl mx-auto bg-[#f4f6f9]/90 backdrop-blur-md py-4 px-8 rounded-full shadow-2xl flex justify-between items-center border border-white/20">
-            <button class="flex-1 flex justify-center group">
-                <i data-lucide="home" class="w-7 h-7 text-gray-600 group-hover:text-[#8b9282] transition-colors"></i>
+        <div class="max-w-2xl mx-auto bg-[#f4f6f9]/90 backdrop-blur-md py-4 px-8 rounded-full shadow-2xl flex justify-between items-center border border-white/20">
+            <!-- Tombol Home (Aktif/Menyala) -->
+            <button id="navHome" class="flex-1 flex justify-center group">
+                <i data-lucide="home" class="w-7 h-7 text-[#8b9282] transition-colors"></i>
             </button>
-            <button class="flex-1 flex justify-center group">
-                <i data-lucide="calendar-days"
-                    class="w-7 h-7 text-gray-600 group-hover:text-[#8b9282] transition-colors"></i>
+            
+            <!-- Tombol Absensi -->
+            <button id="navAbsensi" class="flex-1 flex justify-center group">
+                <i data-lucide="calendar-days" class="w-7 h-7 text-gray-600 group-hover:text-[#8b9282] transition-colors"></i>
             </button>
-            <button class="flex-1 flex justify-center group">
-                <i data-lucide="user-check"
-                    class="w-7 h-7 text-gray-600 group-hover:text-[#8b9282] transition-colors"></i>
+            
+            <!-- Tombol Pengajuan Izin -->
+            <button id="navIzin" class="flex-1 flex justify-center group">
+                <i data-lucide="user-check" class="w-7 h-7 text-gray-600 group-hover:text-[#8b9282] transition-colors"></i>
             </button>
-            <button class="flex-1 flex justify-center group">
-                <i data-lucide="clipboard-list"
-                    class="w-7 h-7 text-gray-600 group-hover:text-[#8b9282] transition-colors"></i>
+            
+            <!-- Tombol Laporan -->
+            <button id="navLaporan" class="flex-1 flex justify-center group">
+                <i data-lucide="clipboard-list" class="w-7 h-7 text-gray-600 group-hover:text-[#8b9282] transition-colors"></i>
             </button>
-            <button class="flex-1 flex justify-center group">
+            
+            <!-- Tombol Profil -->
+            <button id="navProfil" class="flex-1 flex justify-center group">
                 <i data-lucide="user" class="w-7 h-7 text-gray-600 group-hover:text-[#8b9282] transition-colors"></i>
             </button>
         </div>
@@ -145,15 +223,98 @@
             window.location.href = 'laporan.html';
         });
 
-        // 6. LOGIKA TOMBOL BERANDA
-        document.getElementById('btnhome').addEventListener('click', function () {
-            window.location.href = '.html';
+        // 6. LOGIKA NAVIGASI BAWAH (BOTTOM NAV)
+        document.getElementById('navHome').addEventListener('click', function () {
+            // Karena sudah di Beranda, kita biarkan saja atau refresh halaman
+            window.scrollTo({ top: 0, behavior: 'smooth' }); 
         });
 
-        // 7. LOGIKA TOMBOL ABSENSI
-        document.getElementById('btnAbsen').addEventListener('click', function () {
+        document.getElementById('navAbsensi').addEventListener('click', function () {
             window.location.href = 'absensi_pilihan.html';
         });
+
+        document.getElementById('navIzin').addEventListener('click', function () {
+            window.location.href = 'izin_pilihan.html';
+        });
+
+        document.getElementById('navLaporan').addEventListener('click', function () {
+            window.location.href = 'laporan.html';
+        });
+
+        document.getElementById('navProfil').addEventListener('click', function () {
+             window.location.href = 'profil.html';
+        });
+
+        // 7. LOGIKA GRAFIK KEHADIRAN
+        // LOGIKA GRAFIK TINGKAT KEHADIRAN DINAMIS (CHART.JS)
+        window.addEventListener('DOMContentLoaded', async () => {
+            const userNIK = sessionStorage.getItem('userNIK');
+            if (!userNIK) return;
+
+            try {
+                // 1. Panggil API untuk meminta data perhitungan absen
+                const response = await fetch(`api_grafik_absen.php?nik=${userNIK}`);
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    const dataAbsen = result.data;
+
+                    // 2. Ubah angka persentase di tengah lingkaran donat
+                    document.getElementById('teksPersentase').innerText = dataAbsen.persentase + '%';
+
+                    // 3. Gambar Grafik menggunakan Data Real
+                    const ctx = document.getElementById('kehadiranChart').getContext('2d');
+                    new Chart(ctx, {
+                        type: 'doughnut',
+                        data: {
+                            labels: ['Hadir', 'Izin/Sakit', 'Alpa'],
+                            datasets: [{
+                                data: [dataAbsen.hadir, dataAbsen.izin, dataAbsen.alpa],
+                                backgroundColor: [
+                                    '#8b9282', // Warna Hadir
+                                    '#d4d8c8', // Warna Izin
+                                    '#e74c3c'  // Warna Alpa
+                                ],
+                                borderWidth: 0,
+                                hoverOffset: 6
+                            }]
+                        },
+                        options: {
+                            cutout: '80%',
+                            responsive: true,
+                            maintainAspectRatio: true,
+                            plugins: {
+                                legend: {
+                                    position: 'bottom',
+                                    labels: {
+                                        color: '#4b5563',
+                                        font: { family: "'Inter', sans-serif", size: 11, weight: 'bold' },
+                                        usePointStyle: true,
+                                        padding: 20
+                                    }
+                                },
+                                tooltip: {
+                                    enabled: true,
+                                    backgroundColor: 'rgba(0,0,0,0.8)',
+                                    titleFont: { family: "'Inter', sans-serif", size: 12 },
+                                    bodyFont: { family: "'Inter', sans-serif", size: 13, weight: 'bold' },
+                                    displayColors: false,
+                                    callbacks: {
+                                        // Menampilkan format "Hari" saat bagian donat disentuh/di-hover
+                                        label: function(context) {
+                                            return context.label + ': ' + context.parsed + ' Hari';
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error("Gagal memuat grafik kehadiran:", error);
+            }
+        });
+
     </script>
 </body>
 

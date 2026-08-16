@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil Karyawan - PT. Labbayk Haramain Travel</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; margin: 0; padding: 0; }
+        
+        /* Modifikasi input agar menyatu dengan background hijau */
+        .input-flush {
+            width: 100%;
+            background-color: transparent;
+            border-bottom: 1px solid #7a8171; /* Garis bawah hijau gelap */
+            padding: 0.5rem 0;
+            color: #1f2937; /* Teks abu-abu sangat gelap/hampir hitam */
+            font-size: 0.875rem;
+            font-weight: 600;
+            transition: border-color 0.3s;
+        }
+        .input-flush:focus {
+            outline: none;
+            border-bottom-color: #1f2937; /* Garis bawah menjadi hitam saat diklik */
+        }
+        .input-flush:read-only {
+            color: #4b5563; /* Teks abu-abu untuk data yang tidak bisa diedit */
+            border-bottom-style: dashed;
+            cursor: not-allowed;
+        }
+    </style>
+</head>
+<body class="bg-[#a9af9e] min-h-screen flex flex-col pb-10">
+
+    <!-- Header (Background Putih, Teks Hitam) -->
+    <header class="bg-white px-6 py-4 flex items-center shadow-md sticky top-0 z-10">
+        <button onclick="window.location.href='beranda.html'" class="text-gray-600 hover:text-gray-900 transition-colors mr-4 flex items-center justify-center">
+            <i data-lucide="arrow-left" class="w-6 h-6 md:w-7 md:h-7"></i>
+        </button>
+        <h1 class="text-lg md:text-xl font-bold tracking-widest text-gray-900 uppercase">Profil Saya</h1>
+    </header>
+
+    <main class="w-full max-w-3xl mx-auto px-6 mt-8 flex flex-col gap-10">
+        
+        <!-- Bagian Foto Profil & Nama -->
+        <section class="flex flex-col items-center">
+            <div class="relative group cursor-pointer">
+                <!-- Foto Profil Default -->
+                <div class="w-28 h-28 bg-[#8b9282] rounded-full flex items-center justify-center text-white shadow-lg overflow-hidden border-4 border-[#f4f6f9]">
+                    <img id="fotoProfil" src="" alt="Foto Profil" class="w-full h-full object-cover">
+                </div>
+                <!-- Indikator Loading -->
+                <div id="loadingProfil" class="absolute inset-0 flex items-center justify-center bg-[#f4f6f9]/70 rounded-full">
+                    <i data-lucide="loader-2" class="w-6 h-6 text-[#8b9282] animate-spin"></i>
+                </div>
+                <!-- Tombol Edit Foto -->
+                <div class="absolute bottom-0 right-0 bg-gray-800 p-2 rounded-full text-white shadow-md hover:bg-gray-700 transition-colors border-2 border-[#f4f6f9]">
+                    <i data-lucide="camera" class="w-4 h-4"></i>
+                </div>
+            </div>
+            
+            <h2 id="namaHeader" class="mt-4 text-xl font-black text-gray-900 tracking-wide text-center">Memuat...</h2>
+            <div class="flex items-center gap-2 mt-1.5">
+                <span id="badgeStatus" class="bg-white text-gray-600 text-[10px] font-extrabold uppercase px-3 py-1 rounded-full tracking-wider shadow-sm">Loading</span>
+            </div>
+        </section>
+
+        <form id="formProfil" class="flex flex-col gap-8 hidden">
+            
+            <!-- BAGIAN 1: Read-only (Hanya Admin yang bisa ubah di Database) -->
+            <div>
+                <h3 class="text-xs font-black text-gray-800 uppercase tracking-widest mb-4">Informasi Pekerjaan</h3>
+                <div class="flex flex-col gap-4 pl-1">
+                    <div class="flex items-end gap-3">
+                        <i data-lucide="credit-card" class="w-5 h-5 text-gray-700 pb-1"></i>
+                        <div class="flex-1 relative">
+                            <label class="text-[10px] font-bold text-gray-700 uppercase tracking-wider absolute -top-3 left-0">NIK</label>
+                            <input type="text" id="inputNIK" class="input-flush" readonly>
+                        </div>
+                    </div>
+                    <div class="flex items-end gap-3">
+                        <i data-lucide="building-2" class="w-5 h-5 text-gray-700 pb-1"></i>
+                        <div class="flex-1 relative">
+                            <label class="text-[10px] font-bold text-gray-700 uppercase tracking-wider absolute -top-3 left-0">Departemen</label>
+                            <input type="text" id="inputDepartemen" class="input-flush" readonly>
+                        </div>
+                    </div>
+                    <div class="flex items-end gap-3">
+                        <i data-lucide="briefcase" class="w-5 h-5 text-gray-700 pb-1"></i>
+                        <div class="flex-1 relative">
+                            <label class="text-[10px] font-bold text-gray-700 uppercase tracking-wider absolute -top-3 left-0">Jabatan</label>
+                            <input type="text" id="inputJabatan" class="input-flush" readonly>
+                        </div>
+                    </div>
+                    <div class="flex items-end gap-3">
+                        <i data-lucide="clock" class="w-5 h-5 text-gray-700 pb-1"></i>
+                        <div class="flex-1 relative">
+                            <label class="text-[10px] font-bold text-gray-700 uppercase tracking-wider absolute -top-3 left-0">Shift Kerja</label>
+                            <input type="text" id="inputShift" class="input-flush" readonly>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BAGIAN 2: Editable -->
+            <div class="mt-4">
+                <h3 class="text-xs font-black text-gray-800 uppercase tracking-widest mb-4">Kontak Pribadi</h3>
+                <div class="flex flex-col gap-4 pl-1">
+                    <div class="flex items-end gap-3">
+                        <i data-lucide="mail" class="w-5 h-5 text-gray-700 pb-1"></i>
+                        <div class="flex-1 relative">
+                            <label class="text-[10px] font-bold text-gray-800 uppercase tracking-wider absolute -top-3 left-0">Email</label>
+                            <input type="email" id="inputEmail" class="input-flush">
+                        </div>
+                    </div>
+                    <div class="flex items-end gap-3">
+                        <i data-lucide="phone" class="w-5 h-5 text-gray-700 pb-1"></i>
+                        <div class="flex-1 relative">
+                            <label class="text-[10px] font-bold text-gray-800 uppercase tracking-wider absolute -top-3 left-0">Nomor Telepon</label>
+                            <input type="tel" id="inputTelp" class="input-flush">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- BAGIAN 3: Editable Password -->
+            <div class="mt-4">
+                <h3 class="text-xs font-black text-gray-800 uppercase tracking-widest mb-4">Keamanan Akun</h3>
+                <div class="flex flex-col gap-4 pl-1">
+                    <p class="text-[11px] text-gray-700 italic font-medium -mb-1">*Kosongkan jika tidak ingin ganti password</p>
+                    <div class="flex items-end gap-3">
+                        <i data-lucide="lock" class="w-5 h-5 text-gray-700 pb-1"></i>
+                        <div class="flex-1 relative">
+                            <label class="text-[10px] font-bold text-gray-800 uppercase tracking-wider absolute -top-3 left-0">Password Lama</label>
+                            <input type="password" id="inputPassLama" placeholder="••••••••" class="input-flush">
+                        </div>
+                    </div>
+                    <div class="flex items-end gap-3">
+                        <i data-lucide="key-round" class="w-5 h-5 text-gray-700 pb-1"></i>
+                        <div class="flex-1 relative">
+                            <label class="text-[10px] font-bold text-gray-800 uppercase tracking-wider absolute -top-3 left-0">Password Baru</label>
+                            <input type="password" id="inputPassBaru" placeholder="Masukkan password baru" class="input-flush">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tombol Simpan -->
+            <div class="mt-6">
+                <!-- Tombol disesuaikan warnanya agar menyala seperti di beranda -->
+                <button type="button" id="btnSimpan" class="w-full bg-[#f4f6f9] hover:bg-white text-gray-800 font-bold uppercase tracking-widest py-4 rounded-[20px] shadow-lg active:scale-[0.98] transition-all text-sm">
+                    Simpan Perubahan
+                </button>
+            </div>
+
+        </form>
+    </main>
+
+    <script>
+        lucide.createIcons();
+
+        // 1. LOAD DATA PROFIL DARI DATABASE
+        window.addEventListener('DOMContentLoaded', async () => {
+            const userNIK = sessionStorage.getItem('userNIK');
+            
+            if (!userNIK) {
+                alert("Sesi Anda habis. Silakan login kembali.");
+                window.location.href = 'index.html';
+                return;
+            }
+
+            try {
+                const response = await fetch(`api_get_profil.php?nik=${userNIK}`);
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    const data = result.data;
+                    
+                    document.getElementById('loadingProfil').classList.add('hidden');
+                    document.getElementById('formProfil').classList.remove('hidden');
+
+                    const namaAsli = data.nama_karyawan || data.nama || 'Karyawan Labbayku';
+                    document.getElementById('namaHeader').innerText = namaAsli;
+                    document.getElementById('fotoProfil').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(namaAsli)}&background=8b9282&color=fff&size=150`;
+                    
+                    const statusKaryawan = data.status || data.status_karyawan || 'Aktif';
+                    const badge = document.getElementById('badgeStatus');
+                    badge.innerText = statusKaryawan;
+                    if(statusKaryawan.toLowerCase() === 'aktif') {
+                        badge.classList.replace('bg-white', 'bg-emerald-100');
+                        badge.classList.replace('text-gray-600', 'text-emerald-700');
+                    }
+
+                    document.getElementById('inputNIK').value = data.NIK || userNIK;
+                    document.getElementById('inputDepartemen').value = data.departemen || '-';
+                    document.getElementById('inputJabatan').value = data.jabatan || '-';
+                    document.getElementById('inputShift').value = data.shift_kerja || '-';
+                    
+                    document.getElementById('inputEmail').value = data.email || '';
+                    document.getElementById('inputTelp').value = data.no_telp || '';
+                } else {
+                    alert("Gagal memuat profil: " + result.message);
+                }
+            } catch (error) {
+                console.error("Error:", error);
+                alert("Gagal terhubung ke database.");
+            }
+        });
+
+        // 2. SIMPAN PERUBAHAN KE DATABASE
+        document.getElementById('btnSimpan').addEventListener('click', async () => {
+            const nik = sessionStorage.getItem('userNIK');
+            const email = document.getElementById('inputEmail').value;
+            const noTelp = document.getElementById('inputTelp').value;
+            const passLama = document.getElementById('inputPassLama').value;
+            const passBaru = document.getElementById('inputPassBaru').value;
+
+            if (passBaru !== "" && passLama === "") {
+                alert("Mohon masukkan Password Lama untuk mengonfirmasi penggantian sandi!");
+                document.getElementById('inputPassLama').focus();
+                return;
+            }
+
+            const btnSimpan = document.getElementById('btnSimpan');
+            btnSimpan.innerText = "MENYIMPAN...";
+            btnSimpan.disabled = true;
+
+            try {
+                const response = await fetch('api_update_profil.php', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        nik: nik,
+                        email: email,
+                        no_telp: noTelp,
+                        password_lama: passLama,
+                        password_baru: passBaru
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.status === 'success') {
+                    alert("✅ Profil berhasil diperbarui!");
+                    document.getElementById('inputPassLama').value = "";
+                    document.getElementById('inputPassBaru').value = "";
+                } else {
+                    alert("❌ GAGAL: " + result.message);
+                }
+            } catch (error) {
+                alert("Kesalahan jaringan saat menghubungi server.");
+            }
+
+            btnSimpan.innerText = "SIMPAN PERUBAHAN";
+            btnSimpan.disabled = false;
+        });
+    </script>
+</body>
+</html>
